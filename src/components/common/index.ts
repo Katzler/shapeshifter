@@ -1,2 +1,3 @@
-// Shared UI components will be defined here
-export {}
+export { ViewTabs } from './ViewTabs';
+export type { ViewType } from './ViewTabs';
+export { DataActions } from './DataActions';

@@ -1,0 +1,41 @@
+.preference-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  padding: var(--space-sm);
+  min-height: 44px;
+  cursor: pointer;
+  transition: filter 0.1s;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.preference-cell:hover {
+  filter: brightness(0.95);
+}
+
+.preference-cell:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+.preference-cell.status-neutral {
+  background-color: var(--color-neutral-bg);
+  color: var(--color-neutral);
+}
+
+.preference-cell.status-available {
+  background-color: var(--color-available-bg);
+  color: var(--color-available);
+}
+
+.preference-cell.status-unavailable {
+  background-color: var(--color-unavailable-bg);
+  color: var(--color-unavailable);
+}
+
+.status-icon {
+  user-select: none;
+}

@@ -1,0 +1,136 @@
+.coverage-grid-container {
+  max-width: 800px;
+}
+
+.coverage-grid-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+}
+
+.coverage-legend {
+  display: flex;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-md);
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.legend-dot.available {
+  background-color: var(--color-available);
+}
+
+.legend-dot.unavailable {
+  background-color: var(--color-unavailable);
+}
+
+.legend-dot.neutral {
+  background-color: var(--color-neutral);
+}
+
+.coverage-grid {
+  display: grid;
+  grid-template-columns: auto repeat(7, 1fr);
+  gap: 1px;
+  background-color: var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.coverage-grid .grid-cell {
+  background-color: var(--color-bg);
+  padding: var(--space-sm);
+  min-width: 0;
+}
+
+.coverage-grid .grid-corner {
+  background-color: var(--color-bg-subtle);
+}
+
+.coverage-grid .grid-header {
+  background-color: var(--color-bg-subtle);
+  font-weight: 500;
+  text-align: center;
+}
+
+.coverage-grid .day-header {
+  padding: var(--space-sm) var(--space-xs);
+}
+
+.coverage-grid .shift-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: var(--space-xs) var(--space-sm);
+  min-width: 90px;
+}
+
+.coverage-grid .shift-label {
+  font-weight: 600;
+}
+
+.coverage-grid .shift-time {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.coverage-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: var(--space-sm);
+  min-height: 44px;
+  background-color: var(--color-bg);
+}
+
+.coverage-cell.coverage-gap {
+  background-color: #fef2f2;
+}
+
+.coverage-cell .count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.coverage-cell .count.available {
+  background-color: var(--color-available-bg);
+  color: var(--color-available);
+}
+
+.coverage-cell .count.unavailable {
+  background-color: var(--color-unavailable-bg);
+  color: var(--color-unavailable);
+}
+
+.coverage-cell .count.neutral {
+  background-color: var(--color-neutral-bg);
+  color: var(--color-neutral);
+}
+
+.coverage-empty-note {
+  margin-top: var(--space-md);
+  color: var(--color-text-muted);
+  font-style: italic;
+}

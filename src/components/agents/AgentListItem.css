@@ -1,0 +1,114 @@
+.agent-list-item {
+  display: flex;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 0 var(--space-xs);
+  transition: background-color 0.1s;
+  gap: var(--space-sm);
+}
+
+.agent-list-item:hover {
+  background-color: var(--color-border);
+}
+
+.agent-list-item.selected {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.agent-list-item.selected:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.agent-list-item .agent-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agent-list-item .edit-button,
+.agent-list-item .delete-button {
+  opacity: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 2px;
+  transition: opacity 0.1s;
+}
+
+.agent-list-item .delete-button {
+  font-size: 18px;
+  padding: 0 4px;
+}
+
+.agent-list-item:hover .edit-button,
+.agent-list-item:hover .delete-button {
+  opacity: 0.6;
+}
+
+.agent-list-item .edit-button:hover,
+.agent-list-item .delete-button:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.agent-list-item.selected .edit-button:hover,
+.agent-list-item.selected .delete-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.agent-name-input {
+  flex: 1;
+  padding: 2px 4px;
+  border: 1px solid var(--color-primary);
+  border-radius: 2px;
+  outline: none;
+  min-width: 0;
+}
+
+.agent-list-item.confirming {
+  background-color: var(--color-unavailable-bg);
+  justify-content: space-between;
+}
+
+.confirm-text {
+  color: var(--color-unavailable);
+  font-weight: 500;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.confirm-yes,
+.confirm-no {
+  padding: 2px 8px;
+  border: none;
+  border-radius: 2px;
+  font-size: 12px;
+}
+
+.confirm-yes {
+  background-color: var(--color-unavailable);
+  color: white;
+}
+
+.confirm-yes:hover {
+  background-color: #dc2626;
+}
+
+.confirm-no {
+  background-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.confirm-no:hover {
+  background-color: var(--color-border-dark);
+}

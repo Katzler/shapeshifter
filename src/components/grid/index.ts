@@ -1,2 +1,2 @@
-// Preference grid components will be defined here
-export {}
+export { PreferenceGrid } from './PreferenceGrid';
+export { PreferenceCell } from './PreferenceCell';

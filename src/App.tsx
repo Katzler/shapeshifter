@@ -1,17 +1,36 @@
+import { useState } from 'react'
 import './App.css'
+import { AppProvider } from './store'
+import { AgentList, AddAgent } from './components/agents'
+import { PreferenceGrid } from './components/grid'
+import { CoverageGrid } from './components/coverage'
+import { ViewTabs, type ViewType, DataActions } from './components/common'
 
-function App() {
+function AppContent() {
+  const [activeView, setActiveView] = useState<ViewType>('editor')
+
   return (
     <div className="app">
       <aside className="sidebar">
         <h2>Agents</h2>
-        <p className="placeholder">Agent list will go here</p>
+        <AgentList />
+        <AddAgent />
+        <DataActions />
       </aside>
       <main className="main-content">
         <h1>ShapeShifter</h1>
-        <p className="placeholder">Select an agent to edit preferences</p>
+        <ViewTabs activeView={activeView} onViewChange={setActiveView} />
+        {activeView === 'editor' ? <PreferenceGrid /> : <CoverageGrid />}
       </main>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <AppProvider>
+      <AppContent />
+    </AppProvider>
   )
 }
 

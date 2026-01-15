@@ -1,0 +1,32 @@
+.add-agent-button {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background: transparent;
+  border: 1px dashed var(--color-border-dark);
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  text-align: left;
+  margin-top: var(--space-sm);
+  transition: border-color 0.1s, color 0.1s;
+}
+
+.add-agent-button:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.add-agent-input {
+  margin-top: var(--space-sm);
+}
+
+.add-agent-input input {
+  width: 100%;
+  padding: var(--space-sm);
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  outline: none;
+}
+
+.add-agent-input input:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}

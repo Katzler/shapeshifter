@@ -1,2 +1,2 @@
-// Agent list components will be defined here
-export {}
+export { AgentList } from './AgentList';
+export { AddAgent } from './AddAgent';
