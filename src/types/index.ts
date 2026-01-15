@@ -24,6 +24,19 @@ export const SHIFTS: readonly Shift[] = [
   { id: 's5', label: 'S5', startTime: '19:00', endTime: '01:00' },
 ] as const;
 
+// Shift durations in hours
+const SHIFT_DURATIONS: Record<ShiftId, number> = {
+  s1: 7,  // 00:00-07:00
+  s2: 6,  // 07:00-13:00
+  s3: 8,  // 09:00-17:00
+  s4: 8,  // 12:00-20:00
+  s5: 6,  // 19:00-01:00 (crosses midnight)
+};
+
+export function shiftDurationHours(shiftId: ShiftId): number {
+  return SHIFT_DURATIONS[shiftId];
+}
+
 // Day definition for display
 export interface Day {
   id: DayOfWeek;
@@ -47,21 +60,35 @@ export type DayPreferences = Record<ShiftId, PreferenceStatus>;
 // Preferences for all days in a week
 export type WeekPreferences = Record<DayOfWeek, DayPreferences>;
 
-// Agent with their weekly preferences
+// Schedule assignment: agentId or null (unassigned)
+export type ScheduleAssignment = string | null;
+
+// Schedule for all shifts in a single day
+export type DaySchedule = Record<ShiftId, ScheduleAssignment>;
+
+// Schedule for all days in a week
+export type WeekSchedule = Record<DayOfWeek, DaySchedule>;
+
+// Default contract hours per week
+export const DEFAULT_CONTRACT_HOURS = 40;
+
+// Agent with their weekly preferences and contract hours
 export interface Agent {
   id: string;
   name: string;
   preferences: WeekPreferences;
+  contractHoursPerWeek: number;
 }
 
 // Top-level app data structure (versioned for future migrations)
 export interface AppData {
   version: number;
   agents: Agent[];
+  schedule: WeekSchedule;
 }
 
 // Current schema version
-export const CURRENT_VERSION = 1;
+export const CURRENT_VERSION = 2;
 
 // Create default empty preferences for a day (all neutral)
 function createDefaultDayPreferences(): DayPreferences {
@@ -87,12 +114,37 @@ export function createDefaultWeekPreferences(): WeekPreferences {
   };
 }
 
+// Create empty day schedule (all null)
+function createEmptyDaySchedule(): DaySchedule {
+  return {
+    s1: null,
+    s2: null,
+    s3: null,
+    s4: null,
+    s5: null,
+  };
+}
+
+// Create empty week schedule (all null)
+export function createEmptyWeekSchedule(): WeekSchedule {
+  return {
+    mon: createEmptyDaySchedule(),
+    tue: createEmptyDaySchedule(),
+    wed: createEmptyDaySchedule(),
+    thu: createEmptyDaySchedule(),
+    fri: createEmptyDaySchedule(),
+    sat: createEmptyDaySchedule(),
+    sun: createEmptyDaySchedule(),
+  };
+}
+
 // Create a new agent with default preferences
 export function createAgent(id: string, name: string): Agent {
   return {
     id,
     name,
     preferences: createDefaultWeekPreferences(),
+    contractHoursPerWeek: DEFAULT_CONTRACT_HOURS,
   };
 }
 
@@ -101,6 +153,7 @@ export function createEmptyAppData(): AppData {
   return {
     version: CURRENT_VERSION,
     agents: [],
+    schedule: createEmptyWeekSchedule(),
   };
 }
 
@@ -154,7 +207,7 @@ function normalizeWeekPreferences(input: unknown): WeekPreferences {
 }
 
 /**
- * Normalize an agent, ensuring id, name, and full preferences are present.
+ * Normalize an agent, ensuring id, name, preferences, and contractHoursPerWeek are present.
  */
 function normalizeAgent(input: unknown): Agent | null {
   if (typeof input !== 'object' || input === null) {
@@ -170,21 +223,64 @@ function normalizeAgent(input: unknown): Agent | null {
     return null;
   }
 
+  // contractHoursPerWeek defaults to DEFAULT_CONTRACT_HOURS
+  let contractHours = DEFAULT_CONTRACT_HOURS;
+  if (typeof obj.contractHoursPerWeek === 'number' && obj.contractHoursPerWeek > 0) {
+    contractHours = Math.round(obj.contractHoursPerWeek);
+  }
+
   return {
     id: obj.id,
     name: obj.name,
     preferences: normalizeWeekPreferences(obj.preferences),
+    contractHoursPerWeek: contractHours,
   };
 }
 
 /**
+ * Normalize day schedule, ensuring all shifts are present. Invalid agentIds become null.
+ */
+function normalizeDaySchedule(input: unknown, validAgentIds: Set<string>): DaySchedule {
+  const result = createEmptyDaySchedule();
+  if (typeof input !== 'object' || input === null) {
+    return result;
+  }
+  const obj = input as Record<string, unknown>;
+  for (const shiftId of SHIFT_IDS) {
+    const val = obj[shiftId];
+    if (typeof val === 'string' && validAgentIds.has(val)) {
+      result[shiftId] = val;
+    } else {
+      result[shiftId] = null;
+    }
+  }
+  return result;
+}
+
+/**
+ * Normalize week schedule, ensuring all days and shifts are present.
+ */
+function normalizeWeekSchedule(input: unknown, validAgentIds: Set<string>): WeekSchedule {
+  const result = createEmptyWeekSchedule();
+  if (typeof input !== 'object' || input === null) {
+    return result;
+  }
+  const obj = input as Record<string, unknown>;
+  for (const dayId of DAY_IDS) {
+    result[dayId] = normalizeDaySchedule(obj[dayId], validAgentIds);
+  }
+  return result;
+}
+
+/**
  * Normalize unknown input into valid AppData.
- * Ensures version is CURRENT_VERSION and all agents have complete preferences.
+ * Ensures version is CURRENT_VERSION, all agents have complete data, and schedule is valid.
  */
 export function normalizeAppData(input: unknown): AppData {
   const result: AppData = {
     version: CURRENT_VERSION,
     agents: [],
+    schedule: createEmptyWeekSchedule(),
   };
 
   if (typeof input !== 'object' || input === null) {
@@ -193,6 +289,7 @@ export function normalizeAppData(input: unknown): AppData {
 
   const obj = input as Record<string, unknown>;
 
+  // Normalize agents first to get valid IDs
   if (Array.isArray(obj.agents)) {
     for (const agentInput of obj.agents) {
       const agent = normalizeAgent(agentInput);
@@ -201,6 +298,12 @@ export function normalizeAppData(input: unknown): AppData {
       }
     }
   }
+
+  // Build set of valid agent IDs for schedule normalization
+  const validAgentIds = new Set(result.agents.map((a) => a.id));
+
+  // Normalize schedule
+  result.schedule = normalizeWeekSchedule(obj.schedule, validAgentIds);
 
   return result;
 }

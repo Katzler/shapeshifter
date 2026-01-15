@@ -4,10 +4,22 @@ import { AppProvider } from './store'
 import { AgentList, AddAgent } from './components/agents'
 import { PreferenceGrid } from './components/grid'
 import { CoverageGrid } from './components/coverage'
+import { ScheduleGrid } from './components/schedule'
 import { ViewTabs, type ViewType, DataActions } from './components/common'
 
 function AppContent() {
   const [activeView, setActiveView] = useState<ViewType>('editor')
+
+  const renderView = () => {
+    switch (activeView) {
+      case 'editor':
+        return <PreferenceGrid />
+      case 'coverage':
+        return <CoverageGrid />
+      case 'schedule':
+        return <ScheduleGrid />
+    }
+  }
 
   return (
     <div className="app">
@@ -20,7 +32,7 @@ function AppContent() {
       <main className="main-content">
         <h1>ShapeShifter</h1>
         <ViewTabs activeView={activeView} onViewChange={setActiveView} />
-        {activeView === 'editor' ? <PreferenceGrid /> : <CoverageGrid />}
+        {renderView()}
       </main>
     </div>
   )

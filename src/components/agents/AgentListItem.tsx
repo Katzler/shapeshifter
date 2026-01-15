@@ -9,11 +9,14 @@ interface AgentListItemProps {
 }
 
 export function AgentListItem({ agent, isSelected }: AgentListItemProps) {
-  const { selectAgent, renameAgent, deleteAgent } = useApp();
+  const { selectAgent, renameAgent, deleteAgent, setContractHours } = useApp();
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(agent.name);
+  const [isEditingHours, setIsEditingHours] = useState(false);
+  const [editHours, setEditHours] = useState(String(agent.contractHoursPerWeek));
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const hoursInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -22,8 +25,15 @@ export function AgentListItem({ agent, isSelected }: AgentListItemProps) {
     }
   }, [isEditing]);
 
+  useEffect(() => {
+    if (isEditingHours && hoursInputRef.current) {
+      hoursInputRef.current.focus();
+      hoursInputRef.current.select();
+    }
+  }, [isEditingHours]);
+
   const handleClick = () => {
-    if (!isEditing && !isConfirmingDelete) {
+    if (!isEditing && !isConfirmingDelete && !isEditingHours) {
       selectAgent(agent.id);
     }
   };
@@ -51,6 +61,28 @@ export function AgentListItem({ agent, isSelected }: AgentListItemProps) {
       handleRenameSubmit();
     } else if (e.key === 'Escape') {
       handleRenameCancel();
+    }
+  };
+
+  const handleHoursClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditHours(String(agent.contractHoursPerWeek));
+    setIsEditingHours(true);
+  };
+
+  const handleHoursSubmit = () => {
+    const hours = parseInt(editHours, 10);
+    if (!isNaN(hours) && hours > 0) {
+      setContractHours(agent.id, hours);
+    }
+    setIsEditingHours(false);
+  };
+
+  const handleHoursKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleHoursSubmit();
+    } else if (e.key === 'Escape') {
+      setIsEditingHours(false);
     }
   };
 
@@ -105,6 +137,28 @@ export function AgentListItem({ agent, isSelected }: AgentListItemProps) {
       ) : (
         <>
           <span className="agent-name">{agent.name}</span>
+          {isEditingHours ? (
+            <input
+              ref={hoursInputRef}
+              type="number"
+              className="hours-input"
+              value={editHours}
+              onChange={(e) => setEditHours(e.target.value)}
+              onKeyDown={handleHoursKeyDown}
+              onBlur={handleHoursSubmit}
+              onClick={(e) => e.stopPropagation()}
+              min="1"
+              max="168"
+            />
+          ) : (
+            <span
+              className="hours-badge"
+              onClick={handleHoursClick}
+              title="Contract hours/week (click to edit)"
+            >
+              {agent.contractHoursPerWeek}h
+            </span>
+          )}
           <button
             className="edit-button"
             onClick={(e) => {

@@ -112,3 +112,36 @@
 .confirm-no:hover {
   background-color: var(--color-border-dark);
 }
+
+.hours-badge {
+  font-size: 11px;
+  padding: 2px 5px;
+  background-color: rgba(0, 0, 0, 0.08);
+  border-radius: 3px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.hours-badge:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.agent-list-item.selected .hours-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.agent-list-item.selected .hours-badge:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.hours-input {
+  width: 45px;
+  padding: 2px 4px;
+  border: 1px solid var(--color-primary);
+  border-radius: 2px;
+  outline: none;
+  font-size: 11px;
+  text-align: center;
+}
