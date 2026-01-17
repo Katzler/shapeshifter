@@ -1,6 +1,9 @@
 # Dependencies
 node_modules
 
+# Internal Planning
+plan/
+
 # Build output
 dist
 
@@ -20,3 +23,4 @@ npm-debug.log*
 .env
 .env.local
 .env.*.local
+/plan
