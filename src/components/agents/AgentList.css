@@ -2,22 +2,23 @@
   list-style: none;
   flex: 1;
   overflow-y: auto;
-  margin: 0 calc(-1 * var(--space-md));
+  margin: 0 calc(-1 * var(--space-2));
+  padding: var(--space-1) 0;
 }
 
 .agent-list-empty {
-  padding: var(--space-md) 0;
+  padding: var(--space-6) var(--space-4);
   text-align: center;
 }
 
 .agent-list-empty .empty-title {
   font-weight: 500;
-  color: var(--color-text);
-  margin-bottom: var(--space-xs);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-1);
 }
 
 .agent-list-empty .empty-hint {
   font-size: 13px;
   color: var(--color-text-muted);
-  line-height: 1.4;
+  line-height: 1.5;
 }

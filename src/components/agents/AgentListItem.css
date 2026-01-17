@@ -1,25 +1,25 @@
 .agent-list-item {
   display: flex;
   align-items: center;
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-2) var(--space-3);
   cursor: pointer;
-  border-radius: 4px;
-  margin: 0 var(--space-xs);
-  transition: background-color 0.1s;
-  gap: var(--space-sm);
+  border-radius: var(--radius-md);
+  margin: 1px var(--space-2);
+  transition: background-color var(--transition-fast);
+  gap: var(--space-2);
+  min-height: 40px;
 }
 
 .agent-list-item:hover {
-  background-color: var(--color-border);
+  background-color: var(--color-bg-subtle);
 }
 
 .agent-list-item.selected {
-  background-color: var(--color-primary);
-  color: white;
+  background-color: var(--color-primary-subtle);
 }
 
 .agent-list-item.selected:hover {
-  background-color: var(--color-primary-hover);
+  background-color: var(--color-primary-subtle);
 }
 
 .agent-list-item .agent-name {
@@ -27,6 +27,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.agent-list-item.selected .agent-name {
+  color: var(--color-primary);
 }
 
 .agent-list-item .edit-button,
@@ -34,42 +40,50 @@
   opacity: 0;
   background: transparent;
   border: none;
-  color: inherit;
+  color: var(--color-text-muted);
   font-size: 14px;
   line-height: 1;
-  padding: 2px 4px;
-  border-radius: 2px;
-  transition: opacity 0.1s;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: opacity var(--transition-fast), background-color var(--transition-fast);
 }
 
 .agent-list-item .delete-button {
-  font-size: 18px;
-  padding: 0 4px;
+  font-size: 16px;
 }
 
 .agent-list-item:hover .edit-button,
 .agent-list-item:hover .delete-button {
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .agent-list-item .edit-button:hover,
 .agent-list-item .delete-button:hover {
   opacity: 1;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.agent-list-item.selected .edit-button,
+.agent-list-item.selected .delete-button {
+  color: var(--color-primary);
 }
 
 .agent-list-item.selected .edit-button:hover,
 .agent-list-item.selected .delete-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(99, 102, 241, 0.1);
+  color: var(--color-primary-hover);
 }
 
 .agent-name-input {
   flex: 1;
-  padding: 2px 4px;
+  padding: var(--space-1) var(--space-2);
   border: 1px solid var(--color-primary);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   outline: none;
   min-width: 0;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-focus);
 }
 
 .agent-list-item.confirming {
@@ -78,21 +92,24 @@
 }
 
 .confirm-text {
-  color: var(--color-unavailable);
+  color: var(--color-text-secondary);
   font-weight: 500;
+  font-size: 13px;
 }
 
 .confirm-actions {
   display: flex;
-  gap: var(--space-xs);
+  gap: var(--space-2);
 }
 
 .confirm-yes,
 .confirm-no {
-  padding: 2px 8px;
+  padding: var(--space-1) var(--space-3);
   border: none;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   font-size: 12px;
+  font-weight: 500;
+  transition: background-color var(--transition-fast);
 }
 
 .confirm-yes {
@@ -105,43 +122,50 @@
 }
 
 .confirm-no {
-  background-color: var(--color-border);
-  color: var(--color-text);
+  background-color: var(--color-bg);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
 }
 
 .confirm-no:hover {
-  background-color: var(--color-border-dark);
+  background-color: var(--color-bg-subtle);
 }
 
 .hours-badge {
   font-size: 11px;
-  padding: 2px 5px;
-  background-color: rgba(0, 0, 0, 0.08);
-  border-radius: 3px;
+  font-weight: 500;
+  padding: 2px 6px;
+  background-color: var(--color-bg-subtle);
+  border-radius: var(--radius-sm);
   color: var(--color-text-muted);
   cursor: pointer;
-  transition: background-color 0.1s;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  border: 1px solid transparent;
 }
 
 .hours-badge:hover {
-  background-color: rgba(0, 0, 0, 0.15);
+  background-color: var(--color-border);
+  color: var(--color-text-secondary);
 }
 
 .agent-list-item.selected .hours-badge {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(99, 102, 241, 0.1);
+  color: var(--color-primary);
 }
 
 .agent-list-item.selected .hours-badge:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(99, 102, 241, 0.15);
 }
 
 .hours-input {
-  width: 45px;
-  padding: 2px 4px;
+  width: 48px;
+  padding: 2px var(--space-2);
   border: 1px solid var(--color-primary);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   outline: none;
   font-size: 11px;
+  font-weight: 500;
   text-align: center;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-focus);
 }

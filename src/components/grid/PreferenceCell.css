@@ -3,21 +3,25 @@
   align-items: center;
   justify-content: center;
   border: none;
-  padding: var(--space-sm);
-  min-height: 44px;
+  padding: var(--space-2);
+  min-height: 48px;
   cursor: pointer;
-  transition: filter 0.1s;
-  font-size: 16px;
+  transition: filter var(--transition-fast), transform var(--transition-fast);
+  font-size: 15px;
   font-weight: 600;
 }
 
 .preference-cell:hover {
-  filter: brightness(0.95);
+  filter: brightness(0.96);
 }
 
-.preference-cell:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: -2px;
+.preference-cell:active {
+  transform: scale(0.98);
+}
+
+.preference-cell:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-primary);
   z-index: 1;
 }
 

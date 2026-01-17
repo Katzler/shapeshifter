@@ -1,32 +1,32 @@
 .add-agent-button {
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-2) var(--space-3);
   background: transparent;
-  border: 1px dashed var(--color-border-dark);
-  border-radius: 4px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
   color: var(--color-text-muted);
   text-align: left;
-  margin-top: var(--space-sm);
-  transition: border-color 0.1s, color 0.1s;
+  margin-top: var(--space-2);
+  transition: border-color var(--transition-base), color var(--transition-base), background-color var(--transition-base);
+  font-weight: 500;
 }
 
 .add-agent-button:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
+  background-color: var(--color-primary-subtle);
 }
 
 .add-agent-input {
-  margin-top: var(--space-sm);
+  margin-top: var(--space-2);
 }
 
 .add-agent-input input {
   width: 100%;
-  padding: var(--space-sm);
+  padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-primary);
-  border-radius: 4px;
+  border-radius: var(--radius-md);
   outline: none;
-}
-
-.add-agent-input input:focus {
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-focus);
 }

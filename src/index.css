@@ -1,40 +1,82 @@
 :root {
-  /* Status colors */
-  --color-available: #22c55e;
-  --color-available-bg: #dcfce7;
+  /* Color palette - calm, professional */
+  --color-available: #10b981;
+  --color-available-bg: #ecfdf5;
+  --color-available-bg-hover: #d1fae5;
+
   --color-unavailable: #ef4444;
-  --color-unavailable-bg: #fee2e2;
-  --color-unavailable-bg-strong: #fecaca;
-  --color-neutral: #9ca3af;
-  --color-neutral-bg: #f3f4f6;
-  --color-warning: #eab308;
-  --color-warning-bg: #fef9c3;
+  --color-unavailable-bg: #fef2f2;
+  --color-unavailable-bg-strong: #fee2e2;
 
-  /* UI colors */
-  --color-primary: #3b82f6;
-  --color-primary-hover: #2563eb;
-  --color-border: #e5e7eb;
-  --color-border-dark: #d1d5db;
+  --color-neutral: #94a3b8;
+  --color-neutral-bg: #f8fafc;
+
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fffbeb;
+
+  /* UI colors - refined, soft */
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-primary-subtle: #eef2ff;
+
+  --color-border: #e2e8f0;
+  --color-border-subtle: #f1f5f9;
+  --color-border-dark: #cbd5e1;
+
   --color-bg: #ffffff;
-  --color-bg-subtle: #f9fafb;
-  --color-text: #111827;
-  --color-text-muted: #6b7280;
+  --color-bg-subtle: #f8fafc;
+  --color-bg-elevated: #ffffff;
 
-  /* Spacing */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
+  --color-text: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-text-placeholder: #94a3b8;
+
+  /* Shadows - subtle, layered */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+  --shadow-focus: 0 0 0 3px rgba(99, 102, 241, 0.15);
+
+  /* Spacing - precise scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* Legacy spacing aliases */
+  --space-xs: var(--space-1);
+  --space-sm: var(--space-2);
+  --space-md: var(--space-4);
+  --space-lg: var(--space-6);
+  --space-xl: var(--space-8);
+
+  /* Border radius - restrained */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
 
   /* Layout */
-  --sidebar-width: 260px;
+  --sidebar-width: 280px;
+
+  /* Transitions */
+  --transition-fast: 100ms ease;
+  --transition-base: 150ms ease;
+  --transition-slow: 200ms ease;
 
   /* Typography */
-  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.5;
   color: var(--color-text);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
@@ -45,15 +87,34 @@
 
 html, body, #root {
   height: 100%;
+  background: var(--color-bg-subtle);
 }
 
 button {
   font-family: inherit;
   font-size: inherit;
   cursor: pointer;
+  border: none;
+  background: none;
+}
+
+button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 input {
   font-family: inherit;
   font-size: inherit;
 }
+
+input:focus-visible {
+  outline: none;
+}
+
+/* Typography utilities */
+.text-sm { font-size: 13px; }
+.text-xs { font-size: 12px; }
+.text-muted { color: var(--color-text-muted); }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
