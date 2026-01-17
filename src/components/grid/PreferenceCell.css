@@ -2,21 +2,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  min-height: 52px;
   border: none;
   padding: var(--space-2);
-  min-height: 52px;
   cursor: pointer;
-  transition: filter var(--transition-fast), transform var(--transition-fast);
-  font-size: var(--font-size-base);
+  transition: background-color var(--transition-fast);
+  font-size: var(--font-size-sm);
   font-weight: 600;
 }
 
 .preference-cell:hover {
-  filter: brightness(0.97);
-}
-
-.preference-cell:active {
-  transform: scale(0.98);
+  filter: brightness(0.96);
 }
 
 .preference-cell:focus-visible {
