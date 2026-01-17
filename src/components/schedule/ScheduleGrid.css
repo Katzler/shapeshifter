@@ -84,9 +84,9 @@
   transition: background-color var(--transition-fast);
 }
 
-/* Unassigned: soft neutral */
+/* Unassigned: soft gray */
 .schedule-cell.unassigned {
-  background-color: var(--color-neutral-bg);
+  background-color: var(--color-bg-subtle);
 }
 
 /* Assigned with available preference: soft green */
@@ -96,7 +96,7 @@
 
 /* Assigned with neutral preference: soft amber */
 .schedule-cell.pref-neutral {
-  background-color: var(--color-warning-bg);
+  background-color: var(--color-neutral-bg);
 }
 
 /* Assigned with unavailable preference: soft red */
