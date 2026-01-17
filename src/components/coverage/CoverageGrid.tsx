@@ -6,9 +6,19 @@ import { DAYS, SHIFTS } from '../../types';
 import './CoverageGrid.css';
 
 function CoverageCell({ counts }: { counts: CoverageCount }) {
-  const hasGap = counts.available === 0;
-  const hasCoverage = counts.available > 0;
-  const cellClass = hasGap ? 'coverage-gap' : hasCoverage ? 'coverage-ok' : '';
+  // Three-state coverage: green (preferred), amber (neutral only), red (gap)
+  const hasPreferred = counts.available > 0;
+  const hasNeutral = counts.neutral > 0;
+  const hasGap = !hasPreferred && !hasNeutral;
+
+  let cellClass = '';
+  if (hasPreferred) {
+    cellClass = 'coverage-ok';
+  } else if (hasNeutral) {
+    cellClass = 'coverage-neutral';
+  } else if (hasGap) {
+    cellClass = 'coverage-gap';
+  }
 
   return (
     <div className={`coverage-cell ${cellClass}`}>
@@ -50,7 +60,7 @@ export function CoverageGrid() {
         </span>
         <span className="legend-item">
           <span className="legend-dot neutral" />
-          Allowed
+          Neutral
         </span>
         <span className="legend-item">
           <span className="legend-dot unavailable" />

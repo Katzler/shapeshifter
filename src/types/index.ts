@@ -180,12 +180,12 @@ export function getScheduleCellStatus(
 export function getPreferenceLabel(preference: PreferenceStatus | undefined): string {
   switch (preference) {
     case 'available':
-      return 'Preferred';
+      return 'Available';
     case 'unavailable':
       return 'Unavailable';
     case 'neutral':
     default:
-      return 'Allowed';
+      return 'Neutral';
   }
 }
 

@@ -54,19 +54,19 @@
   transition: background-color var(--transition-fast);
 }
 
-/* Default state - neutral background */
-.coverage-cell {
+/* Covered state - green (has preferred agents) */
+.coverage-cell.coverage-ok {
+  background-color: var(--color-available-bg);
+}
+
+/* Neutral state - amber (has neutral agents, no preferred) */
+.coverage-cell.coverage-neutral {
   background-color: var(--color-neutral-bg);
 }
 
-/* Gap state - red tint */
+/* Gap state - red (no one can work this shift) */
 .coverage-cell.coverage-gap {
   background-color: var(--color-unavailable-bg);
-}
-
-/* Covered state - green tint */
-.coverage-cell.coverage-ok {
-  background-color: var(--color-available-bg);
 }
 
 /* Count display - simplified, no pills */
