@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import './App.css'
 import { AppProvider } from './store'
 import { AgentList, AddAgent } from './components/agents'
@@ -9,6 +9,10 @@ import { ViewTabs, type ViewType, DataActions } from './components/common'
 
 function AppContent() {
   const [activeView, setActiveView] = useState<ViewType>('schedule')
+
+  const handleAgentSelect = useCallback(() => {
+    setActiveView('editor')
+  }, [])
 
   const renderView = () => {
     switch (activeView) {
@@ -25,7 +29,7 @@ function AppContent() {
     <div className="app">
       <aside className="sidebar">
         <h2>Agents</h2>
-        <AgentList />
+        <AgentList onAgentSelect={handleAgentSelect} />
         <AddAgent />
         <DataActions />
       </aside>

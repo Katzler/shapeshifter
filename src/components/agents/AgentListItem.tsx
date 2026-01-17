@@ -7,9 +7,10 @@ import './AgentListItem.css';
 interface AgentListItemProps {
   agent: Agent;
   isSelected: boolean;
+  onSelect?: () => void;
 }
 
-export function AgentListItem({ agent, isSelected }: AgentListItemProps) {
+export function AgentListItem({ agent, isSelected, onSelect }: AgentListItemProps) {
   const { selectAgent, renameAgent, deleteAgent, setContractHours } = useApp();
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
@@ -38,8 +39,9 @@ export function AgentListItem({ agent, isSelected }: AgentListItemProps) {
   const handleClick = useCallback(() => {
     if (!nameField.isEditing && !isConfirmingDelete && !hoursField.isEditing) {
       selectAgent(agent.id);
+      onSelect?.();
     }
-  }, [nameField.isEditing, hoursField.isEditing, isConfirmingDelete, selectAgent, agent.id]);
+  }, [nameField.isEditing, hoursField.isEditing, isConfirmingDelete, selectAgent, agent.id, onSelect]);
 
   const handleDeleteClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();

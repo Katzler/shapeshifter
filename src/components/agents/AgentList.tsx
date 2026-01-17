@@ -2,7 +2,11 @@ import { useApp } from '../../store';
 import { AgentListItem } from './AgentListItem';
 import './AgentList.css';
 
-export function AgentList() {
+interface AgentListProps {
+  onAgentSelect?: () => void;
+}
+
+export function AgentList({ onAgentSelect }: AgentListProps) {
   const { agents, selectedAgentId } = useApp();
 
   if (agents.length === 0) {
@@ -21,6 +25,7 @@ export function AgentList() {
           key={agent.id}
           agent={agent}
           isSelected={selectedAgentId === agent.id}
+          onSelect={onAgentSelect}
         />
       ))}
     </ul>
