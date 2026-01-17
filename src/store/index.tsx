@@ -14,13 +14,10 @@ import type {
   PreferenceStatus,
   WeekSchedule,
 } from '../types';
-import {
-  createAgent,
-  createEmptyAppData,
-  createEmptyWeekSchedule,
-} from '../types';
-import { loadData, saveData, exportToFile } from '../storage';
-import { generateSchedule, getNextPreferenceStatus, removeAgentFromSchedule } from '../domain';
+import { createAgent, createEmptyAppData, createEmptyWeekSchedule } from '../types';
+import { getNextPreferenceStatus } from '../domain';
+import { appDataRepository, fileService } from '../infrastructure';
+import { scheduleCalculator } from '../services';
 import { generateId } from '../utils';
 
 // Context value type
@@ -56,14 +53,14 @@ interface AppProviderProps {
 
 export function AppProvider({ children }: AppProviderProps) {
   const [data, setData] = useState<AppData>(() => {
-    const loaded = loadData();
+    const loaded = appDataRepository.load();
     return loaded ?? createEmptyAppData();
   });
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
 
   // Auto-save whenever data changes
   useEffect(() => {
-    saveData(data);
+    appDataRepository.save(data);
   }, [data]);
 
   const addAgent = useCallback((name: string): Agent => {
@@ -89,7 +86,7 @@ export function AppProvider({ children }: AppProviderProps) {
     setData((prev) => ({
       ...prev,
       agents: prev.agents.filter((agent) => agent.id !== id),
-      schedule: removeAgentFromSchedule(prev.schedule, id),
+      schedule: scheduleCalculator.removeAgentFromSchedule(prev.schedule, id),
     }));
     setSelectedAgentId((prev) => (prev === id ? null : prev));
   }, []);
@@ -185,14 +182,14 @@ export function AppProvider({ children }: AppProviderProps) {
   }, []);
 
   const suggestSchedule = useCallback((): void => {
-    setData((prev) => {
-      const newSchedule = generateSchedule(prev.agents);
-      return { ...prev, schedule: newSchedule };
-    });
+    setData((prev) => ({
+      ...prev,
+      schedule: scheduleCalculator.generateOptimizedSchedule(prev.agents),
+    }));
   }, []);
 
   const exportData = useCallback((): void => {
-    exportToFile(data);
+    fileService.exportToFile(data);
   }, [data]);
 
   const importData = useCallback((newData: AppData): void => {

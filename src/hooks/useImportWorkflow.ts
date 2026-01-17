@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import type { AppData } from '../types';
-import { readImportFile } from '../storage';
+import { fileService } from '../infrastructure';
 
 type ImportStatus = 'idle' | 'loading' | 'confirming' | 'success' | 'error';
 
@@ -64,7 +64,7 @@ export function useImportWorkflow({
 
     setStatus('loading');
 
-    const result = await readImportFile(file);
+    const result = await fileService.readImportFile(file);
 
     if (result.valid && result.data) {
       setPendingData(result.data);

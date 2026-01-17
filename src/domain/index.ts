@@ -7,3 +7,6 @@ export type { HourStatus } from './schedule';
 export { calculateCoverage } from './coverage';
 export type { CoverageCount, ShiftCoverage, WeekCoverage } from './coverage';
 export { getNextPreferenceStatus } from './preferences';
+
+// Repository interfaces (contracts)
+export type { IAppDataRepository, IFileService, ImportResult } from './repositories';
