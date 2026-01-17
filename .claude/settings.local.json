@@ -13,7 +13,9 @@
       "Bash(git push:*)",
       "Bash(git remote set-url:*)",
       "Bash(gh auth status:*)",
-      "Bash(git remote:*)"
+      "Bash(git remote:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)"
     ]
   }
 }
