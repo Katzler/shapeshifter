@@ -4,8 +4,11 @@
   --color-available-bg: #dcfce7;
   --color-unavailable: #ef4444;
   --color-unavailable-bg: #fee2e2;
+  --color-unavailable-bg-strong: #fecaca;
   --color-neutral: #9ca3af;
   --color-neutral-bg: #f3f4f6;
+  --color-warning: #eab308;
+  --color-warning-bg: #fef9c3;
 
   /* UI colors */
   --color-primary: #3b82f6;

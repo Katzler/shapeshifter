@@ -115,12 +115,24 @@
   justify-content: center;
 }
 
+/* Unassigned: neutral gray */
 .schedule-cell.unassigned {
-  background-color: var(--color-unavailable-bg);
+  background-color: var(--color-neutral-bg);
 }
 
-.schedule-cell.assigned {
+/* Assigned with available preference: green */
+.schedule-cell.pref-available {
   background-color: var(--color-available-bg);
+}
+
+/* Assigned with neutral preference: yellow/amber */
+.schedule-cell.pref-neutral {
+  background-color: var(--color-warning-bg);
+}
+
+/* Assigned with unavailable preference: red (alarming) */
+.schedule-cell.pref-unavailable {
+  background-color: var(--color-unavailable-bg-strong);
 }
 
 .schedule-cell select {

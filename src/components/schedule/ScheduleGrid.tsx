@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 import { useApp } from '../../store';
-import { DAYS, SHIFTS, shiftDurationHours } from '../../types';
+import { getScheduleCellStatus, getPreferenceLabel } from '../../types';
 import type { DayOfWeek, ShiftId } from '../../types';
+import { calculateAgentHours, getHourStatus } from '../../domain';
+import { ShiftGrid } from '../common';
 import './ScheduleGrid.css';
 
 interface ScheduleCellProps {
@@ -13,14 +15,20 @@ function ScheduleCell({ day, shift }: ScheduleCellProps) {
   const { agents, schedule, setScheduleAssignment } = useApp();
   const assignedId = schedule[day][shift];
   const assignedAgent = agents.find((a) => a.id === assignedId);
+  const preference = assignedAgent?.preferences[day][shift];
+  const cellStatus = getScheduleCellStatus(!!assignedAgent, preference);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setScheduleAssignment(day, shift, value === '' ? null : value);
   };
 
+  const tooltip = assignedAgent
+    ? `${assignedAgent.name}: ${getPreferenceLabel(preference)}`
+    : undefined;
+
   return (
-    <div className={`schedule-cell ${assignedAgent ? 'assigned' : 'unassigned'}`}>
+    <div className={`schedule-cell ${cellStatus}`} title={tooltip}>
       <select value={assignedId ?? ''} onChange={handleChange}>
         <option value="">Unassigned</option>
         {agents.map((agent) => (
@@ -36,21 +44,10 @@ function ScheduleCell({ day, shift }: ScheduleCellProps) {
 function ScheduleSummary() {
   const { agents, schedule } = useApp();
 
-  const agentHours = useMemo(() => {
-    const hours: Map<string, number> = new Map();
-    for (const agent of agents) {
-      hours.set(agent.id, 0);
-    }
-    for (const day of DAYS) {
-      for (const shift of SHIFTS) {
-        const agentId = schedule[day.id][shift.id];
-        if (agentId && hours.has(agentId)) {
-          hours.set(agentId, hours.get(agentId)! + shiftDurationHours(shift.id));
-        }
-      }
-    }
-    return hours;
-  }, [agents, schedule]);
+  const agentHours = useMemo(
+    () => calculateAgentHours(agents, schedule),
+    [agents, schedule]
+  );
 
   if (agents.length === 0) {
     return null;
@@ -63,10 +60,7 @@ function ScheduleSummary() {
         {agents.map((agent) => {
           const assigned = agentHours.get(agent.id) ?? 0;
           const target = agent.contractHoursPerWeek;
-          const diff = assigned - target;
-          let status = '';
-          if (diff < -8) status = 'under';
-          else if (diff > 8) status = 'over';
+          const status = getHourStatus(assigned, target);
 
           return (
             <div key={agent.id} className={`summary-item ${status}`}>
@@ -109,43 +103,12 @@ export function ScheduleGrid() {
         <p className="schedule-empty">Add agents to create a schedule.</p>
       ) : (
         <>
-          <div className="schedule-grid">
-            {/* Empty corner cell */}
-            <div className="grid-cell grid-corner" />
-
-            {/* Day headers */}
-            {DAYS.map((day) => (
-              <div key={day.id} className="grid-cell grid-header day-header">
-                {day.label.slice(0, 3)}
-              </div>
-            ))}
-
-            {/* Shift rows */}
-            {SHIFTS.map((shift) => (
-              <>
-                {/* Shift header */}
-                <div
-                  key={`${shift.id}-header`}
-                  className="grid-cell grid-header shift-header"
-                >
-                  <span className="shift-label">{shift.label}</span>
-                  <span className="shift-time">
-                    {shift.startTime}–{shift.endTime}
-                  </span>
-                </div>
-
-                {/* Schedule cells for this shift */}
-                {DAYS.map((day) => (
-                  <ScheduleCell
-                    key={`${shift.id}-${day.id}`}
-                    day={day.id}
-                    shift={shift.id}
-                  />
-                ))}
-              </>
-            ))}
-          </div>
-
+          <ShiftGrid
+            className="schedule-grid"
+            renderCell={(day, shift) => (
+              <ScheduleCell day={day} shift={shift} />
+            )}
+          />
           <ScheduleSummary />
         </>
       )}

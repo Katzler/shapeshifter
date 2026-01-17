@@ -1,117 +1,68 @@
-import { useRef, useState } from 'react';
 import { useApp } from '../../store';
-import { readImportFile } from '../../storage';
-import type { AppData } from '../../types';
+import { useImportWorkflow } from '../../hooks';
 import './DataActions.css';
-
-type ImportStatus = 'idle' | 'confirming' | 'loading' | 'success' | 'error';
 
 export function DataActions() {
   const { agents, exportData, importData } = useApp();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [importStatus, setImportStatus] = useState<ImportStatus>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [pendingData, setPendingData] = useState<AppData | null>(null);
 
-  const handleExport = () => {
-    exportData();
-  };
-
-  const handleImportClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Reset the input so the same file can be selected again
-    e.target.value = '';
-
-    setImportStatus('loading');
-
-    const result = await readImportFile(file);
-
-    if (result.valid && result.data) {
-      setPendingData(result.data);
-      setImportStatus('confirming');
-    } else {
-      setErrorMessage(result.error || 'Unknown error');
-      setImportStatus('error');
-    }
-  };
-
-  const handleConfirmImport = () => {
-    if (!pendingData) return;
-
-    importData(pendingData);
-    setPendingData(null);
-    setImportStatus('success');
-    setTimeout(() => setImportStatus('idle'), 2000);
-  };
-
-  const handleCancelImport = () => {
-    setPendingData(null);
-    setImportStatus('idle');
-  };
-
-  const handleDismissError = () => {
-    setImportStatus('idle');
-    setErrorMessage('');
-  };
+  const importWorkflow = useImportWorkflow({
+    onImport: importData,
+  });
 
   return (
     <div className="data-actions">
       <input
-        ref={fileInputRef}
+        ref={importWorkflow.fileInputRef}
         type="file"
         accept=".json"
-        onChange={handleFileSelect}
+        onChange={importWorkflow.handleFileSelect}
         style={{ display: 'none' }}
       />
 
-      {importStatus === 'idle' && (
+      {importWorkflow.status === 'idle' && (
         <>
-          <button className="data-action-btn" onClick={handleExport}>
+          <button className="data-action-btn" onClick={exportData}>
             <span className="icon">↓</span> Export
           </button>
-          <button className="data-action-btn" onClick={handleImportClick}>
+          <button className="data-action-btn" onClick={importWorkflow.openFilePicker}>
             <span className="icon">↑</span> Import
           </button>
         </>
       )}
 
-      {importStatus === 'confirming' && pendingData && (
+      {importWorkflow.status === 'confirming' && importWorkflow.pendingData && (
         <div className="import-confirm">
           <p className="confirm-info">
-            Import {pendingData.agents.length} agent{pendingData.agents.length !== 1 ? 's' : ''}
+            Import {importWorkflow.pendingData.agents.length} agent
+            {importWorkflow.pendingData.agents.length !== 1 ? 's' : ''}
           </p>
           <p className="confirm-warning">
-            This will replace your {agents.length} existing agent{agents.length !== 1 ? 's' : ''}
+            This will replace your {agents.length} existing agent
+            {agents.length !== 1 ? 's' : ''}
           </p>
           <div className="confirm-buttons">
-            <button className="confirm-btn yes" onClick={handleConfirmImport}>
+            <button className="confirm-btn yes" onClick={importWorkflow.confirmImport}>
               Replace
             </button>
-            <button className="confirm-btn no" onClick={handleCancelImport}>
+            <button className="confirm-btn no" onClick={importWorkflow.cancelImport}>
               Cancel
             </button>
           </div>
         </div>
       )}
 
-      {importStatus === 'loading' && (
+      {importWorkflow.status === 'loading' && (
         <p className="import-status loading">Reading file...</p>
       )}
 
-      {importStatus === 'success' && (
+      {importWorkflow.status === 'success' && (
         <p className="import-status success">Import successful!</p>
       )}
 
-      {importStatus === 'error' && (
+      {importWorkflow.status === 'error' && (
         <div className="import-error">
-          <p className="error-message">{errorMessage}</p>
-          <button className="dismiss-btn" onClick={handleDismissError}>
+          <p className="error-message">{importWorkflow.errorMessage}</p>
+          <button className="dismiss-btn" onClick={importWorkflow.dismissError}>
             Dismiss
           </button>
         </div>

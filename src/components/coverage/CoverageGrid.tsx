@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useApp } from '../../store';
-import { DAYS, SHIFTS } from '../../types';
-import { calculateCoverage, type CoverageCount } from './calculateCoverage';
+import { calculateCoverage, type CoverageCount } from '../../domain/coverage';
+import { ShiftGrid } from '../common';
 import './CoverageGrid.css';
 
 function CoverageCell({ counts }: { counts: CoverageCount }) {
@@ -40,38 +40,12 @@ export function CoverageGrid() {
         </span>
       </div>
 
-      <div className="coverage-grid">
-        {/* Empty corner cell */}
-        <div className="grid-cell grid-corner" />
-
-        {/* Day headers */}
-        {DAYS.map((day) => (
-          <div key={day.id} className="grid-cell grid-header day-header">
-            {day.label.slice(0, 3)}
-          </div>
-        ))}
-
-        {/* Shift rows */}
-        {SHIFTS.map((shift) => (
-          <>
-            {/* Shift header */}
-            <div key={`${shift.id}-header`} className="grid-cell grid-header shift-header">
-              <span className="shift-label">{shift.label}</span>
-              <span className="shift-time">
-                {shift.startTime}–{shift.endTime}
-              </span>
-            </div>
-
-            {/* Coverage cells for this shift */}
-            {DAYS.map((day) => (
-              <CoverageCell
-                key={`${shift.id}-${day.id}`}
-                counts={coverage[day.id][shift.id]}
-              />
-            ))}
-          </>
-        ))}
-      </div>
+      <ShiftGrid
+        className="coverage-grid"
+        renderCell={(day, shift) => (
+          <CoverageCell counts={coverage[day][shift]} />
+        )}
+      />
 
       {agents.length === 0 && (
         <p className="coverage-empty-note">Add agents to see coverage data.</p>

@@ -1,51 +1,44 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useApp } from '../../store';
+import { useEditableField } from '../../hooks';
 import './AddAgent.css';
 
 export function AddAgent() {
   const { addAgent, selectAgent } = useApp();
   const [isAdding, setIsAdding] = useState(false);
-  const [name, setName] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (isAdding && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isAdding]);
-
-  const handleSubmit = () => {
-    const trimmed = name.trim();
-    if (trimmed) {
-      const agent = addAgent(trimmed);
-      selectAgent(agent.id);
-      setName('');
+  const nameField = useEditableField({
+    initialValue: '',
+    onSubmit: (name) => {
+      const trimmed = name.trim();
+      if (trimmed) {
+        const agent = addAgent(trimmed);
+        selectAgent(agent.id);
+      }
       setIsAdding(false);
-    }
-  };
+    },
+    validate: (name) => name.trim().length > 0,
+  });
 
-  const handleCancel = () => {
-    setName('');
+  const handleStartAdding = useCallback(() => {
+    setIsAdding(true);
+    nameField.startEditing();
+  }, [nameField]);
+
+  const handleCancel = useCallback(() => {
+    nameField.cancel();
     setIsAdding(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSubmit();
-    } else if (e.key === 'Escape') {
-      handleCancel();
-    }
-  };
+  }, [nameField]);
 
   if (isAdding) {
     return (
       <div className="add-agent-input">
         <input
-          ref={inputRef}
+          ref={nameField.inputRef}
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={handleKeyDown}
+          value={nameField.value}
+          onChange={(e) => nameField.setValue(e.target.value)}
+          onKeyDown={nameField.handleKeyDown}
           onBlur={handleCancel}
           placeholder="Agent name"
         />
@@ -54,7 +47,7 @@ export function AddAgent() {
   }
 
   return (
-    <button className="add-agent-button" onClick={() => setIsAdding(true)}>
+    <button className="add-agent-button" onClick={handleStartAdding}>
       + Add Agent
     </button>
   );

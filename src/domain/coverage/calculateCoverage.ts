@@ -36,6 +36,13 @@ function createEmptyWeekCoverage(): WeekCoverage {
   };
 }
 
+/**
+ * Calculates coverage statistics for each shift across the week.
+ * Shows how many agents are available, unavailable, or neutral for each slot.
+ *
+ * @param agents - List of agents with their preferences
+ * @returns Coverage counts per day and shift
+ */
 export function calculateCoverage(agents: Agent[]): WeekCoverage {
   const coverage = createEmptyWeekCoverage();
 

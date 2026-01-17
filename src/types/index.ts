@@ -160,6 +160,35 @@ export function createEmptyAppData(): AppData {
 // Valid preference status values
 const VALID_STATUSES: Set<string> = new Set(['neutral', 'available', 'unavailable']);
 
+/**
+ * Get CSS class suffix for a schedule cell based on assignment and preference.
+ * Returns: 'unassigned' | 'pref-available' | 'pref-neutral' | 'pref-unavailable'
+ */
+export function getScheduleCellStatus(
+  isAssigned: boolean,
+  preference: PreferenceStatus | undefined
+): string {
+  if (!isAssigned) {
+    return 'unassigned';
+  }
+  return `pref-${preference ?? 'neutral'}`;
+}
+
+/**
+ * Get human-readable preference label for tooltips.
+ */
+export function getPreferenceLabel(preference: PreferenceStatus | undefined): string {
+  switch (preference) {
+    case 'available':
+      return 'Available';
+    case 'unavailable':
+      return 'Unavailable';
+    case 'neutral':
+    default:
+      return 'No preference';
+  }
+}
+
 // All day IDs for iteration
 const DAY_IDS: DayOfWeek[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
