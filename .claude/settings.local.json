@@ -16,7 +16,8 @@
       "Bash(git remote:*)",
       "Bash(git pull:*)",
       "Bash(git stash:*)",
-      "WebFetch(domain:katzler.github.io)"
+      "WebFetch(domain:katzler.github.io)",
+      "Bash(tree:*)"
     ]
   }
 }
