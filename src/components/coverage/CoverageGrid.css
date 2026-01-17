@@ -1,9 +1,9 @@
 .coverage-grid-container {
-  max-width: 820px;
+  max-width: 960px;
 }
 
 .coverage-grid-title {
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   letter-spacing: -0.01em;
   margin-bottom: var(--space-3);
@@ -13,8 +13,8 @@
 .coverage-legend {
   display: flex;
   gap: var(--space-5);
-  margin-bottom: var(--space-4);
-  font-size: 12px;
+  margin-bottom: var(--space-5);
+  font-size: var(--font-size-xs);
   color: var(--color-text-muted);
 }
 
@@ -28,7 +28,7 @@
 .legend-dot {
   width: 10px;
   height: 10px;
-  border-radius: var(--radius-sm);
+  border-radius: 50%;
 }
 
 .legend-dot.available {
@@ -43,50 +43,60 @@
   background-color: var(--color-neutral);
 }
 
+/* Coverage cell - full-width tinted background like other grids */
 .coverage-cell {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: var(--space-2);
   padding: var(--space-2);
-  min-height: 48px;
-  background-color: var(--color-bg);
+  min-height: 52px;
   transition: background-color var(--transition-fast);
 }
 
+/* Default state - neutral background */
+.coverage-cell {
+  background-color: var(--color-neutral-bg);
+}
+
+/* Gap state - red tint */
 .coverage-cell.coverage-gap {
   background-color: var(--color-unavailable-bg);
 }
 
+/* Covered state - green tint */
+.coverage-cell.coverage-ok {
+  background-color: var(--color-available-bg);
+}
+
+/* Count display - simplified, no pills */
 .coverage-cell .count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 5px;
-  border-radius: var(--radius-sm);
-  font-size: 11px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
+  min-width: 18px;
+  text-align: center;
 }
 
 .coverage-cell .count.available {
-  background-color: var(--color-available-bg);
   color: var(--color-available);
 }
 
 .coverage-cell .count.unavailable {
-  background-color: var(--color-unavailable-bg);
   color: var(--color-unavailable);
 }
 
 .coverage-cell .count.neutral {
-  background-color: var(--color-neutral-bg);
   color: var(--color-neutral);
 }
 
+/* Separator between counts */
+.coverage-cell .separator {
+  color: var(--color-border-dark);
+  font-size: var(--font-size-xs);
+}
+
 .coverage-empty-note {
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
   color: var(--color-text-muted);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }

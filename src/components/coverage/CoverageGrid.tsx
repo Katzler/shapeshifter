@@ -6,9 +6,11 @@ import './CoverageGrid.css';
 
 function CoverageCell({ counts }: { counts: CoverageCount }) {
   const hasGap = counts.available === 0;
+  const hasCoverage = counts.available > 0;
+  const cellClass = hasGap ? 'coverage-gap' : hasCoverage ? 'coverage-ok' : '';
 
   return (
-    <div className={`coverage-cell ${hasGap ? 'coverage-gap' : ''}`}>
+    <div className={`coverage-cell ${cellClass}`}>
       <span className="count available">{counts.available}</span>
       <span className="count unavailable">{counts.unavailable}</span>
       <span className="count neutral">{counts.neutral}</span>

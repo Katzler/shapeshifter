@@ -2,23 +2,24 @@
   list-style: none;
   flex: 1;
   overflow-y: auto;
-  margin: 0 calc(-1 * var(--space-2));
+  margin: 0;
   padding: var(--space-1) 0;
 }
 
 .agent-list-empty {
-  padding: var(--space-6) var(--space-4);
+  padding: var(--space-6) var(--space-3);
   text-align: center;
 }
 
 .agent-list-empty .empty-title {
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--color-text-secondary);
   margin-bottom: var(--space-1);
 }
 
 .agent-list-empty .empty-hint {
-  font-size: 13px;
+  font-size: var(--font-size-xs);
   color: var(--color-text-muted);
   line-height: 1.5;
 }

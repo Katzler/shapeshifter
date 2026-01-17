@@ -1,13 +1,13 @@
 .agent-list-item {
   display: flex;
   align-items: center;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-2);
   cursor: pointer;
   border-radius: var(--radius-md);
-  margin: 1px var(--space-2);
+  margin: 1px 0;
   transition: background-color var(--transition-fast);
   gap: var(--space-2);
-  min-height: 40px;
+  min-height: 36px;
 }
 
 .agent-list-item:hover {
@@ -27,12 +27,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--color-text);
 }
 
 .agent-list-item.selected .agent-name {
   color: var(--color-primary);
+  font-weight: 600;
 }
 
 .agent-list-item .edit-button,
@@ -41,7 +43,7 @@
   background: transparent;
   border: none;
   color: var(--color-text-muted);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   line-height: 1;
   padding: var(--space-1);
   border-radius: var(--radius-sm);
@@ -49,7 +51,7 @@
 }
 
 .agent-list-item .delete-button {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
 }
 
 .agent-list-item:hover .edit-button,
@@ -71,7 +73,7 @@
 
 .agent-list-item.selected .edit-button:hover,
 .agent-list-item.selected .delete-button:hover {
-  background-color: rgba(99, 102, 241, 0.1);
+  background-color: var(--color-primary-subtle);
   color: var(--color-primary-hover);
 }
 
@@ -94,7 +96,7 @@
 .confirm-text {
   color: var(--color-text-secondary);
   font-weight: 500;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
 }
 
 .confirm-actions {
@@ -107,7 +109,7 @@
   padding: var(--space-1) var(--space-3);
   border: none;
   border-radius: var(--radius-sm);
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   transition: background-color var(--transition-fast);
 }
@@ -118,7 +120,7 @@
 }
 
 .confirm-yes:hover {
-  background-color: #dc2626;
+  background-color: var(--color-unavailable-hover);
 }
 
 .confirm-no {
@@ -132,7 +134,7 @@
 }
 
 .hours-badge {
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   padding: 2px 6px;
   background-color: var(--color-bg-subtle);
@@ -149,12 +151,12 @@
 }
 
 .agent-list-item.selected .hours-badge {
-  background-color: rgba(99, 102, 241, 0.1);
+  background-color: var(--color-primary-subtle);
   color: var(--color-primary);
 }
 
 .agent-list-item.selected .hours-badge:hover {
-  background-color: rgba(99, 102, 241, 0.15);
+  background-color: var(--color-primary-subtle);
 }
 
 .hours-input {
@@ -163,7 +165,7 @@
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-sm);
   outline: none;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   text-align: center;
   background: var(--color-bg);

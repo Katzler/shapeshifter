@@ -1,44 +1,52 @@
 :root {
-  /* Color palette - calm, professional */
-  --color-available: #10b981;
+  /* Status colors - confident, clear */
+  --color-available: #059669;
   --color-available-bg: #ecfdf5;
   --color-available-bg-hover: #d1fae5;
 
-  --color-unavailable: #ef4444;
+  --color-unavailable: #dc2626;
+  --color-unavailable-hover: #b91c1c;
   --color-unavailable-bg: #fef2f2;
   --color-unavailable-bg-strong: #fee2e2;
 
-  --color-neutral: #94a3b8;
-  --color-neutral-bg: #f8fafc;
+  --color-neutral: #9ca3af;
+  --color-neutral-bg: #f9fafb;
 
-  --color-warning: #f59e0b;
+  --color-warning: #d97706;
   --color-warning-bg: #fffbeb;
 
-  /* UI colors - refined, soft */
-  --color-primary: #6366f1;
-  --color-primary-hover: #4f46e5;
+  /* Primary - deeper indigo for premium feel */
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
   --color-primary-subtle: #eef2ff;
 
-  --color-border: #e2e8f0;
-  --color-border-subtle: #f1f5f9;
-  --color-border-dark: #cbd5e1;
+  /* Borders - warmer, softer */
+  --color-border: #e5e7eb;
+  --color-border-subtle: #f3f4f6;
+  --color-border-dark: #d1d5db;
 
+  /* Backgrounds - layered */
   --color-bg: #ffffff;
-  --color-bg-subtle: #f8fafc;
+  --color-bg-subtle: #f9fafb;
+  --color-bg-page: #f3f4f6;
   --color-bg-elevated: #ffffff;
+  --color-bg-overlay: rgba(255, 255, 255, 0.6);
 
-  --color-text: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748b;
-  --color-text-placeholder: #94a3b8;
+  /* Text - warmer grays */
+  --color-text: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-muted: #6b7280;
+  --color-text-placeholder: #9ca3af;
 
-  /* Shadows - subtle, layered */
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
-  --shadow-focus: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  /* Shadows - refined, layered */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-focus: 0 0 0 3px rgba(79, 70, 229, 0.2);
 
-  /* Spacing - precise scale */
+  /* Spacing - generous scale */
+  --space-0: 0px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -47,6 +55,7 @@
   --space-6: 24px;
   --space-8: 32px;
   --space-10: 40px;
+  --space-12: 48px;
 
   /* Legacy spacing aliases */
   --space-xs: var(--space-1);
@@ -55,23 +64,30 @@
   --space-lg: var(--space-6);
   --space-xl: var(--space-8);
 
-  /* Border radius - restrained */
+  /* Border radius - slightly rounder */
   --radius-sm: 4px;
   --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
 
   /* Layout */
-  --sidebar-width: 280px;
+  --sidebar-width: 260px;
 
   /* Transitions */
   --transition-fast: 100ms ease;
   --transition-base: 150ms ease;
   --transition-slow: 200ms ease;
 
-  /* Typography */
+  /* Typography - refined */
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   line-height: 1.5;
   color: var(--color-text);
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
@@ -87,7 +103,7 @@
 
 html, body, #root {
   height: 100%;
-  background: var(--color-bg-subtle);
+  background: var(--color-bg-page);
 }
 
 button {
@@ -119,8 +135,115 @@ select:focus-visible {
 }
 
 /* Typography utilities */
-.text-sm { font-size: 13px; }
-.text-xs { font-size: 12px; }
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
 .text-muted { color: var(--color-text-muted); }
 .font-medium { font-weight: 500; }
 .font-semibold { font-weight: 600; }
+
+/* ========================================
+   SHARED COMPONENT PATTERNS
+   ======================================== */
+
+/* Grid container - consistent max-width for all grids */
+.grid-container {
+  max-width: 960px;
+}
+
+/* Section title - used above grids */
+.section-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-5);
+  color: var(--color-text);
+}
+
+/* Section label - uppercase meta labels */
+.section-label {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+/* Card - elevated content container */
+.card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Grid cell - base styles for all grid cells */
+.grid-cell-base {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-fast);
+}
+
+/* Status backgrounds - consistent across all views */
+.status-bg-available { background-color: var(--color-available-bg); }
+.status-bg-unavailable { background-color: var(--color-unavailable-bg); }
+.status-bg-neutral { background-color: var(--color-neutral-bg); }
+.status-bg-warning { background-color: var(--color-warning-bg); }
+
+/* Status text colors */
+.status-text-available { color: var(--color-available); }
+.status-text-unavailable { color: var(--color-unavailable); }
+.status-text-neutral { color: var(--color-neutral); }
+.status-text-warning { color: var(--color-warning); }
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  text-align: center;
+}
+
+/* Button base - secondary style */
+.btn {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-xs);
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--color-border-dark);
+  color: var(--color-text);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Button primary */
+.btn-primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: white;
+}

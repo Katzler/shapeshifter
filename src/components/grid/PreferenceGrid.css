@@ -4,17 +4,17 @@
   justify-content: center;
   height: 200px;
   color: var(--color-text-muted);
-  font-size: 14px;
+  font-size: var(--font-size-base);
 }
 
 .preference-grid-container {
-  max-width: 820px;
+  max-width: 860px;
 }
 
 .preference-grid-title {
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   letter-spacing: -0.01em;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-5);
   color: var(--color-text);
 }
