@@ -65,6 +65,16 @@
   padding: var(--space-8) 0;
 }
 
+.schedule-note {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  background: var(--color-neutral-bg);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-neutral);
+}
+
 .schedule-cell {
   padding: var(--space-1);
   min-height: 52px;

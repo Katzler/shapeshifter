@@ -12,6 +12,20 @@ import type { AssignmentViolation } from '../../domain';
 import { ShiftGrid } from '../common';
 import './ScheduleGrid.css';
 
+function hasAnyAvailability(agents: Agent[]): boolean {
+  for (const agent of agents) {
+    for (const day of DAYS) {
+      for (const shift of SHIFTS) {
+        const status = agent.preferences[day.id][shift.id];
+        if (status === 'available' || status === 'neutral') {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
 interface AgentOption {
   agent: Agent;
   valid: boolean;
@@ -122,6 +136,9 @@ function ScheduleSummary() {
 export function ScheduleGrid() {
   const { agents, suggestSchedule, clearSchedule } = useApp();
 
+  const anyAvailability = useMemo(() => hasAnyAvailability(agents), [agents]);
+  const showNoAvailabilityNote = agents.length > 0 && !anyAvailability;
+
   const handleClearSchedule = () => {
     if (window.confirm('Clear all shift assignments for this week?')) {
       clearSchedule();
@@ -136,7 +153,7 @@ export function ScheduleGrid() {
           <button
             className="schedule-btn suggest"
             onClick={suggestSchedule}
-            disabled={agents.length === 0}
+            disabled={agents.length === 0 || !anyAvailability}
           >
             Suggest Week
           </button>
@@ -150,6 +167,11 @@ export function ScheduleGrid() {
         <p className="schedule-empty">Add agents to create a schedule.</p>
       ) : (
         <>
+          {showNoAvailabilityNote && (
+            <p className="schedule-note">
+              No availability set. Select an agent to open their shifts before scheduling.
+            </p>
+          )}
           <ShiftGrid
             className="schedule-grid"
             renderCell={(day, shift) => (

@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { useApp } from '../../store';
-import { calculateCoverage, type CoverageCount } from '../../domain/coverage';
+import { calculateCoverage, type CoverageCount, type WeekCoverage } from '../../domain/coverage';
 import { ShiftGrid } from '../common';
+import { DAYS, SHIFTS } from '../../types';
 import './CoverageGrid.css';
 
 function CoverageCell({ counts }: { counts: CoverageCount }) {
@@ -12,16 +13,31 @@ function CoverageCell({ counts }: { counts: CoverageCount }) {
   return (
     <div className={`coverage-cell ${cellClass}`}>
       <span className="count available">{counts.available}</span>
-      <span className="count unavailable">{counts.unavailable}</span>
       <span className="count neutral">{counts.neutral}</span>
+      <span className="count unavailable">{counts.unavailable}</span>
     </div>
   );
+}
+
+function hasAnyAvailability(coverage: WeekCoverage): boolean {
+  for (const day of DAYS) {
+    for (const shift of SHIFTS) {
+      const counts = coverage[day.id][shift.id];
+      if (counts.available > 0 || counts.neutral > 0) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 export function CoverageGrid() {
   const { agents } = useApp();
 
   const coverage = useMemo(() => calculateCoverage(agents), [agents]);
+  const anyAvailability = useMemo(() => hasAnyAvailability(coverage), [coverage]);
+
+  const showNoAvailabilityNote = agents.length > 0 && !anyAvailability;
 
   return (
     <div className="coverage-grid-container">
@@ -33,12 +49,12 @@ export function CoverageGrid() {
           Available
         </span>
         <span className="legend-item">
-          <span className="legend-dot unavailable" />
-          Unavailable
+          <span className="legend-dot neutral" />
+          Allowed
         </span>
         <span className="legend-item">
-          <span className="legend-dot neutral" />
-          Neutral
+          <span className="legend-dot unavailable" />
+          Unavailable
         </span>
       </div>
 
@@ -51,6 +67,12 @@ export function CoverageGrid() {
 
       {agents.length === 0 && (
         <p className="coverage-empty-note">Add agents to see coverage data.</p>
+      )}
+
+      {showNoAvailabilityNote && (
+        <p className="coverage-empty-note">
+          No availability set. Select an agent to open their shifts.
+        </p>
       )}
     </div>
   );

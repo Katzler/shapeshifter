@@ -90,18 +90,18 @@ export interface AppData {
 // Current schema version
 export const CURRENT_VERSION = 2;
 
-// Create default empty preferences for a day (all neutral)
+// Create default preferences for a day (all unavailable for safety-first scheduling)
 function createDefaultDayPreferences(): DayPreferences {
   return {
-    s1: 'neutral',
-    s2: 'neutral',
-    s3: 'neutral',
-    s4: 'neutral',
-    s5: 'neutral',
+    s1: 'unavailable',
+    s2: 'unavailable',
+    s3: 'unavailable',
+    s4: 'unavailable',
+    s5: 'unavailable',
   };
 }
 
-// Create default empty preferences for a week (all neutral)
+// Create default preferences for a week (all unavailable for safety-first scheduling)
 export function createDefaultWeekPreferences(): WeekPreferences {
   return {
     mon: createDefaultDayPreferences(),
@@ -180,12 +180,12 @@ export function getScheduleCellStatus(
 export function getPreferenceLabel(preference: PreferenceStatus | undefined): string {
   switch (preference) {
     case 'available':
-      return 'Available';
+      return 'Preferred';
     case 'unavailable':
       return 'Unavailable';
     case 'neutral':
     default:
-      return 'No preference';
+      return 'Allowed';
   }
 }
 
