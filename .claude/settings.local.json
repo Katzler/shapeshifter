@@ -15,7 +15,8 @@
       "Bash(gh auth status:*)",
       "Bash(git remote:*)",
       "Bash(git pull:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "WebFetch(domain:katzler.github.io)"
     ]
   }
 }
