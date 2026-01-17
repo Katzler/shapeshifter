@@ -4,6 +4,9 @@ import { fileService } from '../infrastructure';
 
 type ImportStatus = 'idle' | 'loading' | 'confirming' | 'success' | 'error';
 
+// Max file size: 1MB (reasonable for JSON config data)
+const MAX_FILE_SIZE_BYTES = 1024 * 1024;
+
 interface UseImportWorkflowOptions {
   /** Called when import is confirmed with valid data */
   onImport: (data: AppData) => void;
@@ -61,6 +64,13 @@ export function useImportWorkflow({
 
     // Reset the input so the same file can be selected again
     e.target.value = '';
+
+    // Check file size before reading
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setErrorMessage('File is too large (max 1MB)');
+      setStatus('error');
+      return;
+    }
 
     setStatus('loading');
 

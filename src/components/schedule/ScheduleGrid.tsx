@@ -1,10 +1,22 @@
 import { useMemo } from 'react';
 import { useApp } from '../../store';
-import { getScheduleCellStatus, getPreferenceLabel } from '../../types';
-import type { DayOfWeek, ShiftId } from '../../types';
-import { calculateAgentHours, getHourStatus } from '../../domain';
+import { getScheduleCellStatus, getPreferenceLabel, DAYS, SHIFTS } from '../../types';
+import type { Agent, DayOfWeek, ShiftId } from '../../types';
+import {
+  calculateAgentHours,
+  getHourStatus,
+  validateAssignment,
+  getViolationLabel,
+} from '../../domain';
+import type { AssignmentViolation } from '../../domain';
 import { ShiftGrid } from '../common';
 import './ScheduleGrid.css';
+
+interface AgentOption {
+  agent: Agent;
+  valid: boolean;
+  violation: AssignmentViolation | null;
+}
 
 interface ScheduleCellProps {
   day: DayOfWeek;
@@ -18,6 +30,21 @@ function ScheduleCell({ day, shift }: ScheduleCellProps) {
   const preference = assignedAgent?.preferences[day][shift];
   const cellStatus = getScheduleCellStatus(!!assignedAgent, preference);
 
+  // Compute valid/invalid status for each agent
+  const agentOptions: AgentOption[] = useMemo(() => {
+    return agents.map((agent) => {
+      // Skip validation for currently assigned agent (allow keeping them)
+      if (agent.id === assignedId) {
+        return { agent, valid: true, violation: null };
+      }
+      const result = validateAssignment(agent, day, shift, schedule);
+      if (result.valid) {
+        return { agent, valid: true, violation: null };
+      }
+      return { agent, valid: false, violation: result.reason };
+    });
+  }, [agents, day, shift, schedule, assignedId]);
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setScheduleAssignment(day, shift, value === '' ? null : value);
@@ -27,13 +54,27 @@ function ScheduleCell({ day, shift }: ScheduleCellProps) {
     ? `${assignedAgent.name}: ${getPreferenceLabel(preference)}`
     : undefined;
 
+  const dayLabel = DAYS.find((d) => d.id === day)?.label ?? day;
+  const shiftLabel = SHIFTS.find((s) => s.id === shift)?.label ?? shift;
+  const ariaLabel = `${dayLabel} ${shiftLabel} assignment`;
+
   return (
     <div className={`schedule-cell ${cellStatus}`} title={tooltip}>
-      <select value={assignedId ?? ''} onChange={handleChange}>
+      <select
+        value={assignedId ?? ''}
+        onChange={handleChange}
+        aria-label={ariaLabel}
+      >
         <option value="">Unassigned</option>
-        {agents.map((agent) => (
-          <option key={agent.id} value={agent.id}>
+        {agentOptions.map(({ agent, valid, violation }) => (
+          <option
+            key={agent.id}
+            value={agent.id}
+            disabled={!valid}
+            title={violation ? getViolationLabel(violation) : undefined}
+          >
             {agent.name}
+            {violation ? ` (${getViolationLabel(violation)})` : ''}
           </option>
         ))}
       </select>
@@ -81,6 +122,12 @@ function ScheduleSummary() {
 export function ScheduleGrid() {
   const { agents, suggestSchedule, clearSchedule } = useApp();
 
+  const handleClearSchedule = () => {
+    if (window.confirm('Clear all shift assignments for this week?')) {
+      clearSchedule();
+    }
+  };
+
   return (
     <div className="schedule-grid-container">
       <div className="schedule-header">
@@ -93,7 +140,7 @@ export function ScheduleGrid() {
           >
             Suggest Week
           </button>
-          <button className="schedule-btn clear" onClick={clearSchedule}>
+          <button className="schedule-btn clear" onClick={handleClearSchedule}>
             Clear Schedule
           </button>
         </div>

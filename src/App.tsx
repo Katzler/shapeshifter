@@ -5,7 +5,7 @@ import { AgentList, AddAgent } from './components/agents'
 import { PreferenceGrid } from './components/grid'
 import { CoverageGrid } from './components/coverage'
 import { ScheduleGrid } from './components/schedule'
-import { ViewTabs, type ViewType, DataActions } from './components/common'
+import { ViewTabs, type ViewType, DataActions, SaveErrorBanner } from './components/common'
 
 function AppContent() {
   const [activeView, setActiveView] = useState<ViewType>('schedule')
@@ -45,6 +45,7 @@ function AppContent() {
 function App() {
   return (
     <AppProvider>
+      <SaveErrorBanner />
       <AppContent />
     </AppProvider>
   )

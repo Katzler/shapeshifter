@@ -9,9 +9,13 @@ export function PreferenceGrid() {
   const selectedAgent = agents.find((a) => a.id === selectedAgentId);
 
   if (!selectedAgent) {
+    const message = agents.length === 0
+      ? 'Add an agent in the sidebar to get started'
+      : 'Select an agent from the sidebar to edit their preferences';
+
     return (
       <div className="preference-grid-empty">
-        <p>Select an agent to edit preferences</p>
+        <p>{message}</p>
       </div>
     );
   }

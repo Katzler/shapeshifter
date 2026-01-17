@@ -25,6 +25,7 @@ interface AppContextValue {
   agents: Agent[];
   schedule: WeekSchedule;
   selectedAgentId: string | null;
+  saveError: boolean;
   addAgent: (name: string) => Agent;
   renameAgent: (id: string, name: string) => void;
   deleteAgent: (id: string) => void;
@@ -42,6 +43,7 @@ interface AppContextValue {
   suggestSchedule: () => void;
   exportData: () => void;
   importData: (data: AppData) => void;
+  dismissSaveError: () => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -57,11 +59,17 @@ export function AppProvider({ children }: AppProviderProps) {
     return loaded ?? createEmptyAppData();
   });
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState(false);
 
   // Auto-save whenever data changes
   useEffect(() => {
-    appDataRepository.save(data);
+    const success = appDataRepository.save(data);
+    setSaveError(!success);
   }, [data]);
+
+  const dismissSaveError = useCallback(() => {
+    setSaveError(false);
+  }, []);
 
   const addAgent = useCallback((name: string): Agent => {
     const id = generateId();
@@ -201,6 +209,7 @@ export function AppProvider({ children }: AppProviderProps) {
     agents: data.agents,
     schedule: data.schedule,
     selectedAgentId,
+    saveError,
     addAgent,
     renameAgent,
     deleteAgent,
@@ -213,6 +222,7 @@ export function AppProvider({ children }: AppProviderProps) {
     suggestSchedule,
     exportData,
     importData,
+    dismissSaveError,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -23,11 +23,13 @@ export class LocalStorageAppDataRepository implements IAppDataRepository {
     }
   }
 
-  save(data: AppData): void {
+  save(data: AppData): boolean {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      return true;
     } catch (error) {
       console.error('Failed to save data to LocalStorage:', error);
+      return false;
     }
   }
 

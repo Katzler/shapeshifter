@@ -1,13 +1,21 @@
+import { useState, useCallback } from 'react';
 import { useApp } from '../../store';
 import { useImportWorkflow } from '../../hooks';
 import './DataActions.css';
 
 export function DataActions() {
   const { agents, exportData, importData } = useApp();
+  const [exportSuccess, setExportSuccess] = useState(false);
 
   const importWorkflow = useImportWorkflow({
     onImport: importData,
   });
+
+  const handleExport = useCallback(() => {
+    exportData();
+    setExportSuccess(true);
+    setTimeout(() => setExportSuccess(false), 2000);
+  }, [exportData]);
 
   return (
     <div className="data-actions">
@@ -19,15 +27,19 @@ export function DataActions() {
         style={{ display: 'none' }}
       />
 
-      {importWorkflow.status === 'idle' && (
+      {importWorkflow.status === 'idle' && !exportSuccess && (
         <>
-          <button className="data-action-btn" onClick={exportData}>
+          <button className="data-action-btn" onClick={handleExport}>
             <span className="icon">↓</span> Export
           </button>
           <button className="data-action-btn" onClick={importWorkflow.openFilePicker}>
             <span className="icon">↑</span> Import
           </button>
         </>
+      )}
+
+      {exportSuccess && (
+        <p className="import-status success">Exported!</p>
       )}
 
       {importWorkflow.status === 'confirming' && importWorkflow.pendingData && (

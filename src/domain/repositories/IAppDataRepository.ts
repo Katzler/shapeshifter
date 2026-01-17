@@ -14,8 +14,9 @@ export interface IAppDataRepository {
   /**
    * Save application data.
    * @param data - The data to persist
+   * @returns true if save succeeded, false if it failed (e.g., quota exceeded)
    */
-  save(data: AppData): void;
+  save(data: AppData): boolean;
 
   /**
    * Clear all stored data.
