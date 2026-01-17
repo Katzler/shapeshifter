@@ -8,7 +8,7 @@ import { ScheduleGrid } from './components/schedule'
 import { ViewTabs, type ViewType, DataActions } from './components/common'
 
 function AppContent() {
-  const [activeView, setActiveView] = useState<ViewType>('editor')
+  const [activeView, setActiveView] = useState<ViewType>('schedule')
 
   const renderView = () => {
     switch (activeView) {
