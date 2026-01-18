@@ -2,18 +2,11 @@ import { useRef, useEffect, useCallback } from 'react';
 import './DayPickerStrip.css';
 import { DayCell } from './DayCell';
 import { DAYS, type DayOfWeek } from '../../types';
+import { getTodayDayOfWeek } from '../../utils';
 
 interface DayPickerStripProps {
   selectedDay: DayOfWeek;
   onDaySelect: (day: DayOfWeek) => void;
-}
-
-// Get current day of week as DayOfWeek
-function getTodayDayOfWeek(): DayOfWeek {
-  const dayIndex = new Date().getDay();
-  // JavaScript: 0=Sunday, 1=Monday, ...
-  const mapping: DayOfWeek[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-  return mapping[dayIndex];
 }
 
 export function DayPickerStrip({ selectedDay, onDaySelect }: DayPickerStripProps) {

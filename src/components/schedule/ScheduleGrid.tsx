@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, memo } from 'react';
 import { useApp } from '../../store';
 import { getScheduleCellStatus, getPreferenceLabel, DAYS, SHIFTS } from '../../types';
 import type { Agent, DayOfWeek, ShiftId } from '../../types';
@@ -39,7 +39,7 @@ interface ScheduleCellProps {
   shift: ShiftId;
 }
 
-function ScheduleCell({ day, shift }: ScheduleCellProps) {
+const ScheduleCell = memo(function ScheduleCell({ day, shift }: ScheduleCellProps) {
   const { agents, schedule, setScheduleAssignment } = useApp();
   const assignedId = schedule[day][shift];
   const assignedAgent = agents.find((a) => a.id === assignedId);
@@ -96,7 +96,7 @@ function ScheduleCell({ day, shift }: ScheduleCellProps) {
       </select>
     </div>
   );
-}
+});
 
 function ScheduleSummary() {
   const { agents, schedule } = useApp();

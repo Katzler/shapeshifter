@@ -3,13 +3,7 @@ import { useMemo } from 'react';
 import { ShiftSection } from './ShiftSection';
 import { useApp } from '../../store';
 import { DAYS, SHIFTS, type DayOfWeek } from '../../types';
-
-// Get current day of week as DayOfWeek
-function getTodayDayOfWeek(): DayOfWeek {
-  const dayIndex = new Date().getDay();
-  const mapping: DayOfWeek[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-  return mapping[dayIndex];
-}
+import { getTodayDayOfWeek } from '../../utils';
 
 interface MobileScheduleViewProps {
   selectedDay: DayOfWeek;

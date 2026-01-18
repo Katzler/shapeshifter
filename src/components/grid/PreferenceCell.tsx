@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useApp } from '../../store';
 import type { DayOfWeek, ShiftId, PreferenceStatus } from '../../types';
 import './PreferenceCell.css';
@@ -15,7 +16,12 @@ const STATUS_ICONS: Record<PreferenceStatus, string> = {
   unavailable: '✗',
 };
 
-export function PreferenceCell({ agentId, day, shift, status }: PreferenceCellProps) {
+export const PreferenceCell = memo(function PreferenceCell({
+  agentId,
+  day,
+  shift,
+  status,
+}: PreferenceCellProps) {
   const { cyclePreference } = useApp();
 
   const handleClick = () => {
@@ -39,4 +45,4 @@ export function PreferenceCell({ agentId, day, shift, status }: PreferenceCellPr
       <span className="status-icon">{STATUS_ICONS[status]}</span>
     </button>
   );
-}
+});

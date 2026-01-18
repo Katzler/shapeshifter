@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { useApp } from '../../store';
 import { calculateCoverage, type CoverageCount, type WeekCoverage } from '../../domain/coverage';
 import { ShiftGrid } from '../common';
 import { DAYS, SHIFTS } from '../../types';
 import './CoverageGrid.css';
 
-function CoverageCell({ counts }: { counts: CoverageCount }) {
+const CoverageCell = memo(function CoverageCell({ counts }: { counts: CoverageCount }) {
   // Three-state coverage: green (preferred), amber (neutral only), red (gap)
   const hasPreferred = counts.available > 0;
   const hasNeutral = counts.neutral > 0;
@@ -27,7 +27,7 @@ function CoverageCell({ counts }: { counts: CoverageCount }) {
       <span className="count unavailable">{counts.unavailable}</span>
     </div>
   );
-}
+});
 
 function hasAnyAvailability(coverage: WeekCoverage): boolean {
   for (const day of DAYS) {

@@ -3,13 +3,7 @@ import { useCallback } from 'react';
 import { ShiftListEditor } from './ShiftListEditor';
 import { useApp } from '../../store';
 import { DAYS, type DayOfWeek, type ShiftId } from '../../types';
-
-// Get current day of week as DayOfWeek
-function getTodayDayOfWeek(): DayOfWeek {
-  const dayIndex = new Date().getDay();
-  const mapping: DayOfWeek[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-  return mapping[dayIndex];
-}
+import { getTodayDayOfWeek } from '../../utils';
 
 interface MobileEditorViewProps {
   selectedDay: DayOfWeek;

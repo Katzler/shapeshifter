@@ -9,13 +9,7 @@ import { MobileWorkspacePicker, MobileWorkspaceTrigger } from './MobileWorkspace
 import { useApp } from '../../store';
 import type { DayOfWeek } from '../../types';
 import { calculateCoverage, getWeekCoverageSummary } from '../../domain';
-
-// Get current day of week as DayOfWeek
-function getTodayDayOfWeek(): DayOfWeek {
-  const dayIndex = new Date().getDay();
-  const mapping: DayOfWeek[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-  return mapping[dayIndex];
-}
+import { getTodayDayOfWeek } from '../../utils';
 
 function MobileCoverageBanner({ onTapGaps }: { onTapGaps: () => void }) {
   const { agents } = useApp();
