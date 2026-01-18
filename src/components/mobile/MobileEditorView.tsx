@@ -4,6 +4,13 @@ import { ShiftListEditor } from './ShiftListEditor';
 import { useApp } from '../../store';
 import { DAYS, type DayOfWeek, type ShiftId } from '../../types';
 
+// Get current day of week as DayOfWeek
+function getTodayDayOfWeek(): DayOfWeek {
+  const dayIndex = new Date().getDay();
+  const mapping: DayOfWeek[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+  return mapping[dayIndex];
+}
+
 interface MobileEditorViewProps {
   selectedDay: DayOfWeek;
   selectedAgentId: string | null;
@@ -17,6 +24,8 @@ export function MobileEditorView({
 }: MobileEditorViewProps) {
   const { agents, cyclePreference } = useApp();
 
+  const today = getTodayDayOfWeek();
+  const isToday = selectedDay === today;
   const selectedAgent = agents.find((a) => a.id === selectedAgentId);
   const dayLabel = DAYS.find((d) => d.id === selectedDay)?.label ?? selectedDay;
 
@@ -76,7 +85,7 @@ export function MobileEditorView({
 
       {/* Day header */}
       <div className="mobile-editor-view__day-header">
-        <h2 className="mobile-editor-view__day-title">{dayLabel}</h2>
+        <h2 className={`mobile-editor-view__day-title${isToday ? ' mobile-editor-view__day-title--today' : ''}`}>{dayLabel}</h2>
         {selectedAgent && (
           <p className="mobile-editor-view__agent-name">{selectedAgent.name}</p>
         )}

@@ -7,6 +7,7 @@ interface CoverageStatusCellProps {
   label: string;
   status: CoverageStatus;
   isSelected: boolean;
+  isToday: boolean;
   onClick: (day: DayOfWeek) => void;
 }
 
@@ -27,23 +28,32 @@ export function CoverageStatusCell({
   label,
   status,
   isSelected,
+  isToday,
   onClick,
 }: CoverageStatusCellProps) {
   const handleClick = () => {
     onClick(day);
   };
 
+  const classNames = [
+    'coverage-status-cell',
+    `coverage-status-cell--${status}`,
+    isSelected ? 'coverage-status-cell--selected' : '',
+    isToday ? 'coverage-status-cell--today' : '',
+  ].filter(Boolean).join(' ');
+
   return (
     <button
-      className={`coverage-status-cell coverage-status-cell--${status} ${isSelected ? 'coverage-status-cell--selected' : ''}`}
+      className={classNames}
       onClick={handleClick}
       aria-pressed={isSelected}
-      aria-label={`${label}: ${STATUS_LABELS[status]}${isSelected ? ', selected' : ''}`}
+      aria-label={`${label}: ${STATUS_LABELS[status]}${isToday ? ' (Today)' : ''}${isSelected ? ', selected' : ''}`}
     >
       <span className="coverage-status-cell__day">{label.slice(0, 3)}</span>
       <span className="coverage-status-cell__icon" aria-hidden="true">
         {STATUS_ICONS[status]}
       </span>
+      {isToday && <span className="coverage-status-cell__today-dot" aria-hidden="true" />}
     </button>
   );
 }

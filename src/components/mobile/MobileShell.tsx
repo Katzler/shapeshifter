@@ -17,7 +17,7 @@ function getTodayDayOfWeek(): DayOfWeek {
 
 export function MobileShell() {
   const { agents } = useApp();
-  const [activeTab, setActiveTab] = useState<MobileTab>('schedule');
+  const [activeTab, setActiveTab] = useState<MobileTab>('coverage');
   const [selectedDay, setSelectedDay] = useState<DayOfWeek>(getTodayDayOfWeek);
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
 

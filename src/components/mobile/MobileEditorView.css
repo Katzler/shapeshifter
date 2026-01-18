@@ -56,6 +56,10 @@
   color: var(--color-text);
 }
 
+.mobile-editor-view__day-title--today {
+  font-weight: 700;
+}
+
 .mobile-editor-view__agent-name {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);

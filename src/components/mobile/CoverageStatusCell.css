@@ -4,8 +4,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-1);
-  min-width: var(--mobile-touch-target);
-  min-height: var(--mobile-touch-target);
+  min-width: 48px;
+  min-height: 52px;
   padding: var(--space-2);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
@@ -14,6 +14,7 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   border: 2px solid transparent;
+  position: relative;
 }
 
 .coverage-status-cell:active {
@@ -22,6 +23,10 @@
 
 .coverage-status-cell--selected {
   border-color: var(--color-text);
+}
+
+.coverage-status-cell--today .coverage-status-cell__day {
+  font-weight: 700;
 }
 
 .coverage-status-cell__day {
@@ -35,6 +40,15 @@
   font-size: var(--font-size-base);
   font-weight: 700;
   line-height: 1;
+}
+
+.coverage-status-cell__today-dot {
+  position: absolute;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 /* Covered - green */

@@ -4,6 +4,13 @@ import { ShiftSection } from './ShiftSection';
 import { useApp } from '../../store';
 import { DAYS, SHIFTS, type DayOfWeek } from '../../types';
 
+// Get current day of week as DayOfWeek
+function getTodayDayOfWeek(): DayOfWeek {
+  const dayIndex = new Date().getDay();
+  const mapping: DayOfWeek[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+  return mapping[dayIndex];
+}
+
 interface MobileScheduleViewProps {
   selectedDay: DayOfWeek;
 }
@@ -11,8 +18,21 @@ interface MobileScheduleViewProps {
 export function MobileScheduleView({ selectedDay }: MobileScheduleViewProps) {
   const { agents, schedule } = useApp();
 
+  const today = getTodayDayOfWeek();
+  const isToday = selectedDay === today;
   const dayLabel = DAYS.find((d) => d.id === selectedDay)?.label ?? selectedDay;
   const daySchedule = schedule[selectedDay];
+
+  // Count assigned shifts for today
+  const { assignedCount, totalShifts } = useMemo(() => {
+    let count = 0;
+    for (const shift of SHIFTS) {
+      if (daySchedule[shift.id] !== null) {
+        count++;
+      }
+    }
+    return { assignedCount: count, totalShifts: SHIFTS.length };
+  }, [daySchedule]);
 
   // Build a map of agentId -> agent name for quick lookup
   const agentNames = useMemo(() => {
@@ -55,7 +75,12 @@ export function MobileScheduleView({ selectedDay }: MobileScheduleViewProps) {
   return (
     <div className="mobile-schedule-view">
       <div className="mobile-schedule-view__day-header">
-        <h2 className="mobile-schedule-view__day-title">{dayLabel}</h2>
+        <h2 className={`mobile-schedule-view__day-title${isToday ? ' mobile-schedule-view__day-title--today' : ''}`}>
+          {dayLabel}
+          <span className="mobile-schedule-view__assignment-count">
+            {assignedCount} of {totalShifts} assigned
+          </span>
+        </h2>
       </div>
 
       <div className="mobile-schedule-view__shifts">
