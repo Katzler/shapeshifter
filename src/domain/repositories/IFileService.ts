@@ -7,6 +7,7 @@ export interface ImportResult {
   valid: boolean;
   data?: AppData;
   error?: string;
+  workspaceName?: string; // Extracted from import if present
 }
 
 /**
@@ -17,8 +18,9 @@ export interface IFileService {
   /**
    * Export data to a downloadable file.
    * @param data - The application data to export
+   * @param workspaceName - Optional workspace name to include in export
    */
-  exportToFile(data: AppData): void;
+  exportToFile(data: AppData, workspaceName?: string): void;
 
   /**
    * Read and parse an imported file.

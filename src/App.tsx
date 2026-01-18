@@ -7,6 +7,7 @@ import { CoverageGrid } from './components/coverage'
 import { ScheduleGrid } from './components/schedule'
 import { ViewTabs, type ViewType, DataActions, SaveErrorBanner } from './components/common'
 import { MobileShell } from './components/mobile'
+import { WorkspaceSelector } from './components/workspace'
 import { useIsMobile } from './hooks'
 import { calculateCoverage, getWeekCoverageSummary } from './domain'
 
@@ -77,6 +78,8 @@ function DesktopContent() {
   return (
     <div className="app">
       <aside className="sidebar">
+        <h2>Workspace</h2>
+        <WorkspaceSelector />
         <h2>Agents</h2>
         <AgentList onAgentSelect={handleAgentSelect} />
         <AddAgent />

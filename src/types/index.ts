@@ -1,3 +1,17 @@
+// Workspace types
+export {
+  type WorkspaceMeta,
+  type WorkspaceRegistry,
+  WORKSPACE_REGISTRY_VERSION,
+  DEFAULT_WORKSPACE_ID,
+  DEFAULT_WORKSPACE_NAME,
+  MAX_WORKSPACES,
+  createWorkspaceMeta,
+  createDefaultWorkspace,
+  createDefaultRegistry,
+  normalizeWorkspaceRegistry,
+} from './workspace';
+
 // Preference status for a shift slot
 export type PreferenceStatus = 'neutral' | 'available' | 'unavailable';
 

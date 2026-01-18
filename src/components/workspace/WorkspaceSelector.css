@@ -1,0 +1,252 @@
+.workspace-selector {
+  position: relative;
+  margin-bottom: var(--space-4);
+}
+
+.workspace-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.workspace-trigger:hover {
+  background: var(--color-border);
+}
+
+.workspace-trigger.expanded {
+  border-color: var(--color-primary);
+  background: var(--color-bg);
+}
+
+.workspace-trigger-name {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-trigger-chevron {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-left: var(--space-2);
+  flex-shrink: 0;
+}
+
+.workspace-dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  right: 0;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-dropdown);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.workspace-list {
+  list-style: none;
+  padding: var(--space-1);
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.workspace-item {
+  display: flex;
+  align-items: center;
+  padding: var(--space-2);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
+  gap: var(--space-2);
+  min-height: 32px;
+}
+
+.workspace-item:hover {
+  background: var(--color-bg-subtle);
+}
+
+.workspace-item.active {
+  background: var(--color-primary-subtle);
+}
+
+.workspace-item.active:hover {
+  background: var(--color-primary-subtle);
+}
+
+.workspace-indicator {
+  font-size: 8px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  width: 12px;
+  text-align: center;
+}
+
+.workspace-item.active .workspace-indicator {
+  color: var(--color-primary);
+}
+
+.workspace-name {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-item.active .workspace-name {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.workspace-edit-button,
+.workspace-delete-button {
+  opacity: 0;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  line-height: 1;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity var(--transition-fast), background-color var(--transition-fast);
+}
+
+.workspace-delete-button {
+  font-size: var(--font-size-lg);
+}
+
+.workspace-item:hover .workspace-edit-button,
+.workspace-item:hover .workspace-delete-button {
+  opacity: 0.5;
+}
+
+.workspace-edit-button:hover,
+.workspace-delete-button:hover {
+  opacity: 1 !important;
+  background: var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.workspace-item.active .workspace-edit-button,
+.workspace-item.active .workspace-delete-button {
+  color: var(--color-primary);
+}
+
+.workspace-item.active .workspace-edit-button:hover,
+.workspace-item.active .workspace-delete-button:hover {
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-hover);
+}
+
+.workspace-name-input {
+  flex: 1;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  outline: none;
+  min-width: 0;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-focus);
+  font-size: var(--font-size-sm);
+}
+
+.workspace-item.confirming {
+  background: var(--color-unavailable-bg);
+  justify-content: space-between;
+}
+
+.workspace-item.confirming .confirm-text {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-item.confirming .confirm-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.workspace-item.confirming .confirm-yes,
+.workspace-item.confirming .confirm-no {
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.workspace-item.confirming .confirm-yes {
+  background: var(--color-unavailable);
+  color: white;
+}
+
+.workspace-item.confirming .confirm-yes:hover {
+  background: var(--color-unavailable-hover);
+}
+
+.workspace-item.confirming .confirm-no {
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.workspace-item.confirming .confirm-no:hover {
+  background: var(--color-bg-subtle);
+}
+
+.workspace-create-button {
+  display: block;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.workspace-create-button:hover {
+  background: var(--color-bg-subtle);
+  color: var(--color-text);
+}
+
+.workspace-create-form {
+  padding: var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
+
+.workspace-create-input {
+  width: 100%;
+  padding: var(--space-2);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  outline: none;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-focus);
+  font-size: var(--font-size-sm);
+}

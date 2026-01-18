@@ -7,13 +7,17 @@ import type { IFileService, ImportResult } from '../../domain/repositories';
  * Uses browser File API and download mechanisms.
  */
 export class BrowserFileService implements IFileService {
-  exportToFile(data: AppData): void {
+  exportToFile(data: AppData, workspaceName?: string): void {
     const json = JSON.stringify(data, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
 
     const date = new Date().toISOString().split('T')[0];
-    const filename = `shapeshifter-${date}.json`;
+    // Include workspace name in filename if provided
+    const safeName = workspaceName
+      ? workspaceName.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 20)
+      : 'data';
+    const filename = `shapeshifter-${safeName}-${date}.json`;
 
     const link = document.createElement('a');
     link.href = url;
@@ -57,8 +61,12 @@ export class BrowserFileService implements IFileService {
       return { valid: false, error: 'File does not contain a valid JSON object' };
     }
 
+    // Extract workspace name if present
+    const obj = parsed as Record<string, unknown>;
+    const workspaceName = typeof obj.workspaceName === 'string' ? obj.workspaceName : undefined;
+
     const normalized = normalizeAppData(parsed);
-    return { valid: true, data: normalized };
+    return { valid: true, data: normalized, workspaceName };
   }
 }
 

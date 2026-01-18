@@ -16,3 +16,4 @@ export { CoverageStatusCell } from './CoverageStatusCell';
 export { DayBreakdown } from './DayBreakdown';
 export { ShiftCoverageRow } from './ShiftCoverageRow';
 export { StatusBadge } from './StatusBadge';
+export { MobileWorkspacePicker, MobileWorkspaceTrigger } from './MobileWorkspacePicker';

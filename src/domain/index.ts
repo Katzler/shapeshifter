@@ -22,4 +22,4 @@ export type {
 export { getNextPreferenceStatus } from './preferences';
 
 // Repository interfaces (contracts)
-export type { IAppDataRepository, IFileService, ImportResult } from './repositories';
+export type { IAppDataRepository, IWorkspaceRepository, IFileService, ImportResult } from './repositories';

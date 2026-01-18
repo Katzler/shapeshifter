@@ -4,11 +4,12 @@ import { useImportWorkflow } from '../../hooks';
 import './DataActions.css';
 
 export function DataActions() {
-  const { agents, exportData, importData } = useApp();
+  const { agents, exportData, importData, importAsNewWorkspace } = useApp();
   const [exportSuccess, setExportSuccess] = useState(false);
 
   const importWorkflow = useImportWorkflow({
     onImport: importData,
+    onImportAsNew: importAsNewWorkspace,
   });
 
   const handleExport = useCallback(() => {
@@ -47,16 +48,20 @@ export function DataActions() {
           <p className="confirm-info">
             Import {importWorkflow.pendingData.agents.length} agent
             {importWorkflow.pendingData.agents.length !== 1 ? 's' : ''}
+            {importWorkflow.pendingWorkspaceName && (
+              <span className="confirm-workspace"> from "{importWorkflow.pendingWorkspaceName}"</span>
+            )}
           </p>
-          <p className="confirm-warning">
-            This will replace your {agents.length} existing agent
-            {agents.length !== 1 ? 's' : ''}
-          </p>
-          <div className="confirm-buttons">
-            <button className="confirm-btn yes" onClick={importWorkflow.confirmImport}>
-              Replace
+          <div className="confirm-buttons-vertical">
+            {importWorkflow.canImportAsNew && (
+              <button className="confirm-btn new" onClick={importWorkflow.importAsNewWorkspace}>
+                Create New Workspace
+              </button>
+            )}
+            <button className="confirm-btn replace" onClick={importWorkflow.confirmImport}>
+              Replace Current ({agents.length} agent{agents.length !== 1 ? 's' : ''})
             </button>
-            <button className="confirm-btn no" onClick={importWorkflow.cancelImport}>
+            <button className="confirm-btn cancel" onClick={importWorkflow.cancelImport}>
               Cancel
             </button>
           </div>

@@ -4,6 +4,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useRef,
   type ReactNode,
 } from 'react';
 import type {
@@ -13,19 +14,34 @@ import type {
   ShiftId,
   PreferenceStatus,
   WeekSchedule,
+  WorkspaceMeta,
+  WorkspaceRegistry,
 } from '../types';
-import { createAgent, createEmptyAppData, createEmptyWeekSchedule } from '../types';
+import {
+  createAgent,
+  createEmptyAppData,
+  createEmptyWeekSchedule,
+  createWorkspaceMeta,
+  MAX_WORKSPACES,
+} from '../types';
 import { getNextPreferenceStatus } from '../domain';
-import { appDataRepository, fileService } from '../infrastructure';
+import { workspaceRepository, fileService } from '../infrastructure';
 import { scheduleCalculator } from '../services';
 import { generateId } from '../utils';
 
 // Context value type
 interface AppContextValue {
+  // Existing state
   agents: Agent[];
   schedule: WeekSchedule;
   selectedAgentId: string | null;
   saveError: boolean;
+
+  // Workspace state
+  currentWorkspace: WorkspaceMeta;
+  workspaces: WorkspaceMeta[];
+
+  // Existing actions
   addAgent: (name: string) => Agent;
   renameAgent: (id: string, name: string) => void;
   deleteAgent: (id: string) => void;
@@ -44,6 +60,13 @@ interface AppContextValue {
   exportData: () => void;
   importData: (data: AppData) => void;
   dismissSaveError: () => void;
+
+  // Workspace actions
+  createWorkspace: (name: string) => WorkspaceMeta | null;
+  switchWorkspace: (workspaceId: string) => void;
+  renameWorkspace: (workspaceId: string, name: string) => void;
+  deleteWorkspace: (workspaceId: string) => void;
+  importAsNewWorkspace: (data: AppData, name: string) => WorkspaceMeta | null;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -54,22 +77,68 @@ interface AppProviderProps {
 }
 
 export function AppProvider({ children }: AppProviderProps) {
+  // Initialize registry (with migration if needed)
+  const [registry, setRegistry] = useState<WorkspaceRegistry>(() => {
+    const loaded = workspaceRepository.loadRegistry();
+    if (loaded) {
+      return loaded;
+    }
+    // Migrate from legacy or create fresh
+    return workspaceRepository.migrateFromLegacy();
+  });
+
+  // Initialize data from active workspace
   const [data, setData] = useState<AppData>(() => {
-    const loaded = appDataRepository.load();
+    const loaded = workspaceRepository.loadWorkspace(registry.activeWorkspaceId);
     return loaded ?? createEmptyAppData();
   });
+
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
   const [saveError, setSaveError] = useState(false);
 
-  // Auto-save whenever data changes
+  // Track if this is the initial mount to avoid double-save
+  const isInitialMount = useRef(true);
+
+  // Auto-save workspace data when it changes
   useEffect(() => {
-    const success = appDataRepository.save(data);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    const success = workspaceRepository.saveWorkspace(registry.activeWorkspaceId, data);
     setSaveError(!success);
-  }, [data]);
+
+    // Update lastModifiedAt in registry
+    if (success) {
+      setRegistry((prev) => ({
+        ...prev,
+        workspaces: prev.workspaces.map((w) =>
+          w.id === prev.activeWorkspaceId
+            ? { ...w, lastModifiedAt: new Date().toISOString() }
+            : w
+        ),
+      }));
+    }
+  }, [data, registry.activeWorkspaceId]);
+
+  // Save registry when it changes
+  useEffect(() => {
+    workspaceRepository.saveRegistry(registry);
+  }, [registry]);
+
+  // Derived workspace values
+  const currentWorkspace = registry.workspaces.find(
+    (w) => w.id === registry.activeWorkspaceId
+  ) ?? registry.workspaces[0];
+
+  const workspaces = registry.workspaces;
 
   const dismissSaveError = useCallback(() => {
     setSaveError(false);
   }, []);
+
+  // ==================== Agent Actions ====================
 
   const addAgent = useCallback((name: string): Agent => {
     const id = generateId();
@@ -166,6 +235,8 @@ export function AppProvider({ children }: AppProviderProps) {
     setSelectedAgentId(id);
   }, []);
 
+  // ==================== Schedule Actions ====================
+
   const setScheduleAssignment = useCallback(
     (day: DayOfWeek, shift: ShiftId, agentId: string | null): void => {
       setData((prev) => ({
@@ -196,20 +267,142 @@ export function AppProvider({ children }: AppProviderProps) {
     }));
   }, []);
 
+  // ==================== Import/Export Actions ====================
+
   const exportData = useCallback((): void => {
-    fileService.exportToFile(data);
-  }, [data]);
+    // Include workspace name in export
+    const exportPayload = {
+      ...data,
+      workspaceName: currentWorkspace.name,
+    };
+    fileService.exportToFile(exportPayload, currentWorkspace.name);
+  }, [data, currentWorkspace.name]);
 
   const importData = useCallback((newData: AppData): void => {
     setData(newData);
     setSelectedAgentId(null);
   }, []);
 
+  // ==================== Workspace Actions ====================
+
+  const createWorkspace = useCallback((name: string): WorkspaceMeta | null => {
+    if (registry.workspaces.length >= MAX_WORKSPACES) {
+      console.warn(`Maximum workspaces (${MAX_WORKSPACES}) reached`);
+      return null;
+    }
+
+    const id = generateId();
+    const newWorkspace = createWorkspaceMeta(id, name);
+    const emptyData = createEmptyAppData();
+
+    // Save empty data for new workspace
+    workspaceRepository.saveWorkspace(id, emptyData);
+
+    // Add to registry and switch to it
+    setRegistry((prev) => ({
+      ...prev,
+      activeWorkspaceId: id,
+      workspaces: [...prev.workspaces, newWorkspace],
+    }));
+
+    // Load empty data for new workspace
+    setData(emptyData);
+    setSelectedAgentId(null);
+
+    return newWorkspace;
+  }, [registry.workspaces.length]);
+
+  const switchWorkspace = useCallback((workspaceId: string): void => {
+    if (workspaceId === registry.activeWorkspaceId) {
+      return; // Already active
+    }
+
+    // Current data is auto-saved via useEffect
+    // Update active workspace
+    setRegistry((prev) => ({
+      ...prev,
+      activeWorkspaceId: workspaceId,
+    }));
+
+    // Load new workspace data
+    const newData = workspaceRepository.loadWorkspace(workspaceId) ?? createEmptyAppData();
+    setData(newData);
+    setSelectedAgentId(null);
+  }, [registry.activeWorkspaceId]);
+
+  const renameWorkspace = useCallback((workspaceId: string, name: string): void => {
+    setRegistry((prev) => ({
+      ...prev,
+      workspaces: prev.workspaces.map((w) =>
+        w.id === workspaceId
+          ? { ...w, name: name.trim() || w.name, lastModifiedAt: new Date().toISOString() }
+          : w
+      ),
+    }));
+  }, []);
+
+  const deleteWorkspace = useCallback((workspaceId: string): void => {
+    // Cannot delete the last workspace
+    if (registry.workspaces.length <= 1) {
+      console.warn('Cannot delete the last workspace');
+      return;
+    }
+
+    const wasActive = registry.activeWorkspaceId === workspaceId;
+    const remainingWorkspaces = registry.workspaces.filter((w) => w.id !== workspaceId);
+
+    // If deleting active workspace, switch to first remaining
+    if (wasActive) {
+      const newActiveId = remainingWorkspaces[0].id;
+      const newData = workspaceRepository.loadWorkspace(newActiveId) ?? createEmptyAppData();
+      setData(newData);
+      setSelectedAgentId(null);
+    }
+
+    // Update registry
+    setRegistry((prev) => ({
+      ...prev,
+      activeWorkspaceId: wasActive ? remainingWorkspaces[0].id : prev.activeWorkspaceId,
+      workspaces: remainingWorkspaces,
+    }));
+
+    // Delete storage
+    workspaceRepository.deleteWorkspace(workspaceId);
+  }, [registry.workspaces.length, registry.activeWorkspaceId]);
+
+  const importAsNewWorkspace = useCallback((newData: AppData, name: string): WorkspaceMeta | null => {
+    if (registry.workspaces.length >= MAX_WORKSPACES) {
+      console.warn(`Maximum workspaces (${MAX_WORKSPACES}) reached`);
+      return null;
+    }
+
+    const id = generateId();
+    const newWorkspace = createWorkspaceMeta(id, name);
+
+    // Save imported data for new workspace
+    workspaceRepository.saveWorkspace(id, newData);
+
+    // Add to registry and switch to it
+    setRegistry((prev) => ({
+      ...prev,
+      activeWorkspaceId: id,
+      workspaces: [...prev.workspaces, newWorkspace],
+    }));
+
+    // Load the imported data
+    setData(newData);
+    setSelectedAgentId(null);
+
+    return newWorkspace;
+  }, [registry.workspaces.length]);
+
   const value: AppContextValue = {
     agents: data.agents,
     schedule: data.schedule,
     selectedAgentId,
     saveError,
+    currentWorkspace,
+    workspaces,
     addAgent,
     renameAgent,
     deleteAgent,
@@ -223,6 +416,11 @@ export function AppProvider({ children }: AppProviderProps) {
     exportData,
     importData,
     dismissSaveError,
+    createWorkspace,
+    switchWorkspace,
+    renameWorkspace,
+    deleteWorkspace,
+    importAsNewWorkspace,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

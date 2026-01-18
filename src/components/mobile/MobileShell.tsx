@@ -5,6 +5,7 @@ import { DayPickerStrip } from './DayPickerStrip';
 import { MobileEditorView } from './MobileEditorView';
 import { MobileScheduleView } from './MobileScheduleView';
 import { MobileCoverageView } from './MobileCoverageView';
+import { MobileWorkspacePicker, MobileWorkspaceTrigger } from './MobileWorkspacePicker';
 import { useApp } from '../../store';
 import type { DayOfWeek } from '../../types';
 import { calculateCoverage, getWeekCoverageSummary } from '../../domain';
@@ -64,6 +65,7 @@ export function MobileShell() {
   const [activeTab, setActiveTab] = useState<MobileTab>('coverage');
   const [selectedDay, setSelectedDay] = useState<DayOfWeek>(getTodayDayOfWeek);
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const [isWorkspacePickerOpen, setIsWorkspacePickerOpen] = useState(false);
 
   // Auto-select first agent when agents change and none is selected
   useEffect(() => {
@@ -117,8 +119,13 @@ export function MobileShell() {
   return (
     <div className="mobile-shell">
       <header className="mobile-shell__header">
-        <h1 className="mobile-shell__title">ShapeShifter</h1>
+        <MobileWorkspaceTrigger onClick={() => setIsWorkspacePickerOpen(true)} />
       </header>
+
+      <MobileWorkspacePicker
+        isOpen={isWorkspacePickerOpen}
+        onClose={() => setIsWorkspacePickerOpen(false)}
+      />
 
       {showCoverageBanner && <MobileCoverageBanner onTapGaps={handleBannerTap} />}
 
