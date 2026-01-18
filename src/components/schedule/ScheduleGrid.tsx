@@ -12,6 +12,7 @@ import {
 } from '../../domain';
 import type { AssignmentViolation } from '../../domain';
 import { ShiftGrid } from '../common';
+import { useConfirm } from '../../hooks';
 import './ScheduleGrid.css';
 
 function hasAnyAvailability(agents: Agent[]): boolean {
@@ -138,6 +139,7 @@ function ScheduleSummary() {
 
 export function ScheduleGrid() {
   const { agents, suggestSchedule, clearSchedule } = useApp();
+  const confirm = useConfirm();
 
   const anyAvailability = useMemo(() => hasAnyAvailability(agents), [agents]);
   const showNoAvailabilityNote = agents.length > 0 && !anyAvailability;
@@ -149,26 +151,36 @@ export function ScheduleGrid() {
     return getWeekCoverageSummary(coverage);
   }, [agents]);
 
-  const handleSuggestSchedule = useCallback(() => {
+  const handleSuggestSchedule = useCallback(async () => {
     if (coverageSummary && coverageSummary.gapShifts > 0) {
       const { gapShifts, gapDetails } = coverageSummary;
       const gapText = gapShifts <= 3
         ? gapDetails.map(g => `${g.day} ${g.shift}`).join(', ')
         : `${gapShifts} shifts`;
-      const confirmed = window.confirm(
-        `Warning: ${gapText} ${gapShifts === 1 ? 'has' : 'have'} no available agents.\n\n` +
-        `These shifts will remain unassigned. Continue anyway?`
-      );
+      const confirmed = await confirm({
+        title: 'Coverage Gaps Detected',
+        message: `${gapText} ${gapShifts === 1 ? 'has' : 'have'} no available agents.\n\nThese shifts will remain unassigned. Continue anyway?`,
+        confirmText: 'Continue',
+        cancelText: 'Cancel',
+        variant: 'warning',
+      });
       if (!confirmed) return;
     }
     suggestSchedule();
-  }, [coverageSummary, suggestSchedule]);
+  }, [coverageSummary, suggestSchedule, confirm]);
 
-  const handleClearSchedule = useCallback(() => {
-    if (window.confirm('Clear all shift assignments for this week?')) {
+  const handleClearSchedule = useCallback(async () => {
+    const confirmed = await confirm({
+      title: 'Clear Schedule',
+      message: 'Clear all shift assignments for this week?',
+      confirmText: 'Clear',
+      cancelText: 'Cancel',
+      variant: 'danger',
+    });
+    if (confirmed) {
       clearSchedule();
     }
-  }, [clearSchedule]);
+  }, [clearSchedule, confirm]);
 
   return (
     <div className="schedule-grid-container">

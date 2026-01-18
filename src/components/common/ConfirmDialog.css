@@ -1,0 +1,196 @@
+/* Backdrop */
+.confirm-dialog__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  animation: confirmBackdropFadeIn var(--transition-base) ease-out;
+}
+
+@keyframes confirmBackdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Dialog container */
+.confirm-dialog {
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 400px;
+  width: 100%;
+  overflow: hidden;
+  animation: confirmDialogSlideIn var(--transition-base) ease-out;
+}
+
+@keyframes confirmDialogSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Content area */
+.confirm-dialog__content {
+  padding: var(--space-6);
+}
+
+/* Title */
+.confirm-dialog__title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+  line-height: 1.3;
+}
+
+/* Variant-specific title colors */
+.confirm-dialog--warning .confirm-dialog__title {
+  color: var(--color-warning);
+}
+
+.confirm-dialog--danger .confirm-dialog__title {
+  color: var(--color-unavailable);
+}
+
+/* Message */
+.confirm-dialog__message {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* Actions area */
+.confirm-dialog__actions {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-bg-subtle);
+  border-top: 1px solid var(--color-border);
+  justify-content: flex-end;
+}
+
+/* Button base */
+.confirm-dialog__btn {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-width: 80px;
+}
+
+/* Cancel button */
+.confirm-dialog__btn--cancel {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.confirm-dialog__btn--cancel:hover {
+  border-color: var(--color-border-dark);
+  color: var(--color-text);
+}
+
+.confirm-dialog__btn--cancel:active {
+  background: var(--color-bg-subtle);
+}
+
+/* Confirm button - warning variant */
+.confirm-dialog__btn--confirm.confirm-dialog__btn--warning {
+  background: var(--color-warning);
+  border: 1px solid var(--color-warning);
+  color: white;
+}
+
+.confirm-dialog__btn--confirm.confirm-dialog__btn--warning:hover {
+  background: #c2410c;
+  border-color: #c2410c;
+}
+
+.confirm-dialog__btn--confirm.confirm-dialog__btn--warning:active {
+  background: #9a3412;
+  border-color: #9a3412;
+}
+
+/* Confirm button - danger variant */
+.confirm-dialog__btn--confirm.confirm-dialog__btn--danger {
+  background: var(--color-unavailable);
+  border: 1px solid var(--color-unavailable);
+  color: white;
+}
+
+.confirm-dialog__btn--confirm.confirm-dialog__btn--danger:hover {
+  background: var(--color-unavailable-hover);
+  border-color: var(--color-unavailable-hover);
+}
+
+.confirm-dialog__btn--confirm.confirm-dialog__btn--danger:active {
+  background: #7a3f3f;
+  border-color: #7a3f3f;
+}
+
+/* Focus styles */
+.confirm-dialog__btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .confirm-dialog__backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .confirm-dialog {
+    max-width: none;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    animation: confirmDialogSlideUp var(--transition-base) ease-out;
+  }
+
+  @keyframes confirmDialogSlideUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .confirm-dialog__content {
+    padding: var(--space-6) var(--space-5);
+  }
+
+  .confirm-dialog__actions {
+    padding: var(--space-4) var(--space-5);
+    padding-bottom: calc(var(--space-4) + var(--mobile-safe-area-bottom));
+  }
+
+  .confirm-dialog__btn {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .confirm-dialog__backdrop,
+  .confirm-dialog {
+    animation: none;
+  }
+}

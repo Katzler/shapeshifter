@@ -8,7 +8,7 @@ import { ScheduleGrid } from './components/schedule'
 import { ViewTabs, type ViewType, DataActions, SaveErrorBanner } from './components/common'
 import { MobileShell } from './components/mobile'
 import { WorkspaceSelector } from './components/workspace'
-import { useIsMobile } from './hooks'
+import { useIsMobile, ConfirmProvider } from './hooks'
 import { calculateCoverage, getWeekCoverageSummary } from './domain'
 
 function CoverageBanner() {
@@ -108,8 +108,10 @@ function AppContent() {
 function App() {
   return (
     <AppProvider>
-      <SaveErrorBanner />
-      <AppContent />
+      <ConfirmProvider>
+        <SaveErrorBanner />
+        <AppContent />
+      </ConfirmProvider>
     </AppProvider>
   )
 }
