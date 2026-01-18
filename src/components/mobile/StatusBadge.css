@@ -1,0 +1,36 @@
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.status-badge__icon {
+  font-weight: 700;
+  line-height: 1;
+}
+
+.status-badge__label {
+  line-height: 1;
+}
+
+/* Covered - green */
+.status-badge--covered {
+  background: var(--color-available-bg);
+  color: var(--color-available);
+}
+
+/* Tight - amber/neutral */
+.status-badge--tight {
+  background: var(--color-neutral-bg);
+  color: var(--color-neutral);
+}
+
+/* Gap - warning/red */
+.status-badge--gap {
+  background: var(--color-unavailable-bg);
+  color: var(--color-unavailable);
+}

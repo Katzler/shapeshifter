@@ -1,0 +1,45 @@
+.day-picker-strip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  min-height: var(--mobile-day-picker-height);
+}
+
+.day-picker-strip__days {
+  display: flex;
+  gap: var(--space-1);
+  overflow-x: auto;
+  flex: 1;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+}
+
+.day-picker-strip__days::-webkit-scrollbar {
+  display: none;
+}
+
+.day-picker-strip__today-pill {
+  flex-shrink: 0;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-xl);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.day-picker-strip__today-pill:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+.day-picker-strip__today-pill:active {
+  transform: scale(0.95);
+}

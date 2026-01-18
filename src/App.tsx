@@ -6,8 +6,10 @@ import { PreferenceGrid } from './components/grid'
 import { CoverageGrid } from './components/coverage'
 import { ScheduleGrid } from './components/schedule'
 import { ViewTabs, type ViewType, DataActions, SaveErrorBanner } from './components/common'
+import { MobileShell } from './components/mobile'
+import { useIsMobile } from './hooks'
 
-function AppContent() {
+function DesktopContent() {
   const [activeView, setActiveView] = useState<ViewType>('schedule')
 
   const handleAgentSelect = useCallback(() => {
@@ -40,6 +42,16 @@ function AppContent() {
       </main>
     </div>
   )
+}
+
+function AppContent() {
+  const isMobile = useIsMobile()
+
+  if (isMobile) {
+    return <MobileShell />
+  }
+
+  return <DesktopContent />
 }
 
 function App() {

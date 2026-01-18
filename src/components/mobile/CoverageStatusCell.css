@@ -1,0 +1,68 @@
+.coverage-status-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: var(--mobile-touch-target);
+  min-height: var(--mobile-touch-target);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  border: 2px solid transparent;
+}
+
+.coverage-status-cell:active {
+  transform: scale(0.95);
+}
+
+.coverage-status-cell--selected {
+  border-color: var(--color-text);
+}
+
+.coverage-status-cell__day {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.coverage-status-cell__icon {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Covered - green */
+.coverage-status-cell--covered {
+  background: var(--color-available-bg);
+  color: var(--color-available);
+}
+
+.coverage-status-cell--covered:hover {
+  background: var(--color-available-bg-hover);
+}
+
+/* Tight - amber */
+.coverage-status-cell--tight {
+  background: var(--color-neutral-bg);
+  color: var(--color-neutral);
+}
+
+.coverage-status-cell--tight:hover {
+  filter: brightness(0.95);
+}
+
+/* Gap - red */
+.coverage-status-cell--gap {
+  background: var(--color-unavailable-bg);
+  color: var(--color-unavailable);
+}
+
+.coverage-status-cell--gap:hover {
+  background: var(--color-unavailable-bg-strong);
+}

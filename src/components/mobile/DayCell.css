@@ -1,0 +1,57 @@
+.day-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--mobile-touch-target);
+  min-height: var(--mobile-touch-target);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  position: relative;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.day-cell:hover {
+  background: var(--color-bg-subtle);
+}
+
+.day-cell:active {
+  background: var(--color-border-subtle);
+}
+
+.day-cell--selected {
+  background: var(--color-primary);
+  color: white;
+}
+
+.day-cell--selected:hover {
+  background: var(--color-primary-hover);
+}
+
+.day-cell--today:not(.day-cell--selected) {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.day-cell__label {
+  line-height: 1;
+}
+
+.day-cell__today-dot {
+  position: absolute;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.day-cell--selected .day-cell__today-dot {
+  background: white;
+}

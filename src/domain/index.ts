@@ -5,8 +5,18 @@ export { generateSchedule, validateAssignment, getViolationLabel } from './sched
 export type { AssignmentValidation, AssignmentViolation } from './scheduling';
 export { calculateAgentHours, getHourStatus, removeAgentFromSchedule } from './schedule';
 export type { HourStatus } from './schedule';
-export { calculateCoverage } from './coverage';
-export type { CoverageCount, ShiftCoverage, WeekCoverage } from './coverage';
+export {
+  calculateCoverage,
+  getShiftCoverageStatus,
+  getDayCoverageStatus,
+  getCoverageStatusLabel,
+} from './coverage';
+export type {
+  CoverageCount,
+  ShiftCoverage,
+  WeekCoverage,
+  CoverageStatus,
+} from './coverage';
 export { getNextPreferenceStatus } from './preferences';
 
 // Repository interfaces (contracts)

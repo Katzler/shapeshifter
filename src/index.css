@@ -75,6 +75,15 @@
   /* Layout */
   --sidebar-width: 260px;
 
+  /* Mobile breakpoint */
+  --breakpoint-mobile: 768px;
+
+  /* Mobile-specific spacing */
+  --mobile-tab-bar-height: 56px;
+  --mobile-day-picker-height: 48px;
+  --mobile-touch-target: 44px;
+  --mobile-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+
   /* Transitions */
   --transition-fast: 100ms ease;
   --transition-base: 150ms ease;
@@ -248,4 +257,47 @@ select:focus-visible {
   background: var(--color-primary-hover);
   border-color: var(--color-primary-hover);
   color: white;
+}
+
+/* ========================================
+   MOBILE-SPECIFIC STYLES
+   ======================================== */
+
+@media (max-width: 767px) {
+  /* Prevent text selection on interactive elements */
+  button,
+  [role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Improve touch scrolling */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Safe area insets for notched devices */
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-width: 767px) and (orientation: landscape) {
+  :root {
+    --mobile-tab-bar-height: 48px;
+    --mobile-day-picker-height: 40px;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

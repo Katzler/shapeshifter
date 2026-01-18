@@ -1,0 +1,31 @@
+.shift-section {
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.shift-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.shift-section__label {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.shift-section__time {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.shift-section__content {
+  /* Content area for agent rows or gap indicator */
+}
