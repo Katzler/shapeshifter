@@ -42,3 +42,42 @@
     transform: translateY(0);
   }
 }
+
+/* Mobile Coverage Banner */
+.mobile-coverage-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  border: none;
+  width: 100%;
+  text-align: center;
+}
+
+.mobile-coverage-banner__icon {
+  font-weight: 700;
+}
+
+.mobile-coverage-banner--covered {
+  background: var(--color-available-bg);
+  color: var(--color-available);
+}
+
+.mobile-coverage-banner--tight {
+  background: var(--color-neutral-bg);
+  color: var(--color-neutral);
+}
+
+.mobile-coverage-banner--gap {
+  background: var(--color-unavailable-bg);
+  color: var(--color-unavailable);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-coverage-banner--gap:active {
+  filter: brightness(0.95);
+}

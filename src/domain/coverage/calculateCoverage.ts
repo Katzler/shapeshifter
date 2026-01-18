@@ -107,3 +107,46 @@ export function getCoverageStatusLabel(status: CoverageStatus): string {
       return 'Gap';
   }
 }
+
+/**
+ * Week coverage summary for confidence banner.
+ */
+export interface WeekCoverageSummary {
+  totalShifts: number;
+  coveredShifts: number;
+  tightShifts: number;
+  gapShifts: number;
+  gapDetails: Array<{ day: string; shift: string }>;
+}
+
+/**
+ * Get summary of week coverage for confidence banner.
+ */
+export function getWeekCoverageSummary(coverage: WeekCoverage): WeekCoverageSummary {
+  let coveredShifts = 0;
+  let tightShifts = 0;
+  let gapShifts = 0;
+  const gapDetails: Array<{ day: string; shift: string }> = [];
+
+  for (const day of DAYS) {
+    for (const shift of SHIFTS) {
+      const status = getShiftCoverageStatus(coverage[day.id][shift.id]);
+      if (status === 'covered') {
+        coveredShifts++;
+      } else if (status === 'tight') {
+        tightShifts++;
+      } else {
+        gapShifts++;
+        gapDetails.push({ day: day.label, shift: shift.label });
+      }
+    }
+  }
+
+  return {
+    totalShifts: DAYS.length * SHIFTS.length,
+    coveredShifts,
+    tightShifts,
+    gapShifts,
+    gapDetails,
+  };
+}

@@ -41,3 +41,35 @@
 .placeholder {
   color: var(--color-text-muted);
 }
+
+/* Coverage Confidence Banner */
+.coverage-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin-bottom: var(--space-4);
+}
+
+.coverage-banner__icon {
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.coverage-banner--covered {
+  background: var(--color-available-bg);
+  color: var(--color-available);
+}
+
+.coverage-banner--tight {
+  background: var(--color-neutral-bg);
+  color: var(--color-neutral);
+}
+
+.coverage-banner--gap {
+  background: var(--color-unavailable-bg);
+  color: var(--color-unavailable);
+}

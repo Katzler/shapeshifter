@@ -10,12 +10,14 @@ export {
   getShiftCoverageStatus,
   getDayCoverageStatus,
   getCoverageStatusLabel,
+  getWeekCoverageSummary,
 } from './coverage';
 export type {
   CoverageCount,
   ShiftCoverage,
   WeekCoverage,
   CoverageStatus,
+  WeekCoverageSummary,
 } from './coverage';
 export { getNextPreferenceStatus } from './preferences';
 

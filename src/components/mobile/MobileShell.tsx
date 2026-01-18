@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import './MobileShell.css';
 import { BottomTabBar, type MobileTab } from './BottomTabBar';
 import { DayPickerStrip } from './DayPickerStrip';
@@ -7,12 +7,56 @@ import { MobileScheduleView } from './MobileScheduleView';
 import { MobileCoverageView } from './MobileCoverageView';
 import { useApp } from '../../store';
 import type { DayOfWeek } from '../../types';
+import { calculateCoverage, getWeekCoverageSummary } from '../../domain';
 
 // Get current day of week as DayOfWeek
 function getTodayDayOfWeek(): DayOfWeek {
   const dayIndex = new Date().getDay();
   const mapping: DayOfWeek[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
   return mapping[dayIndex];
+}
+
+function MobileCoverageBanner({ onTapGaps }: { onTapGaps: () => void }) {
+  const { agents } = useApp();
+
+  const summary = useMemo(() => {
+    if (agents.length === 0) return null;
+    const coverage = calculateCoverage(agents);
+    return getWeekCoverageSummary(coverage);
+  }, [agents]);
+
+  if (!summary) return null;
+
+  const { gapShifts, tightShifts, totalShifts } = summary;
+
+  if (gapShifts > 0) {
+    return (
+      <button className="mobile-coverage-banner mobile-coverage-banner--gap" onClick={onTapGaps}>
+        <span className="mobile-coverage-banner__icon">!</span>
+        <span className="mobile-coverage-banner__text">
+          {gapShifts} gap{gapShifts !== 1 ? 's' : ''} need attention
+        </span>
+      </button>
+    );
+  }
+
+  if (tightShifts > 0) {
+    return (
+      <div className="mobile-coverage-banner mobile-coverage-banner--tight">
+        <span className="mobile-coverage-banner__icon">~</span>
+        <span className="mobile-coverage-banner__text">
+          {tightShifts} shift{tightShifts !== 1 ? 's' : ''} tight
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mobile-coverage-banner mobile-coverage-banner--covered">
+      <span className="mobile-coverage-banner__icon">✓</span>
+      <span className="mobile-coverage-banner__text">All {totalShifts} shifts covered</span>
+    </div>
+  );
 }
 
 export function MobileShell() {
@@ -46,6 +90,12 @@ export function MobileShell() {
 
   // Day picker is shown for Schedule and Availability tabs, not Coverage
   const showDayPicker = activeTab !== 'coverage';
+  // Banner is shown on Schedule and Availability tabs
+  const showCoverageBanner = activeTab !== 'coverage';
+
+  const handleBannerTap = useCallback(() => {
+    setActiveTab('coverage');
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -69,6 +119,8 @@ export function MobileShell() {
       <header className="mobile-shell__header">
         <h1 className="mobile-shell__title">ShapeShifter</h1>
       </header>
+
+      {showCoverageBanner && <MobileCoverageBanner onTapGaps={handleBannerTap} />}
 
       {showDayPicker && (
         <DayPickerStrip

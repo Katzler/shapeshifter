@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useApp } from '../../store';
 import { getScheduleCellStatus, getPreferenceLabel, DAYS, SHIFTS } from '../../types';
 import type { Agent, DayOfWeek, ShiftId } from '../../types';
@@ -7,6 +7,8 @@ import {
   getHourStatus,
   validateAssignment,
   getViolationLabel,
+  calculateCoverage,
+  getWeekCoverageSummary,
 } from '../../domain';
 import type { AssignmentViolation } from '../../domain';
 import { ShiftGrid } from '../common';
@@ -139,11 +141,33 @@ export function ScheduleGrid() {
   const anyAvailability = useMemo(() => hasAnyAvailability(agents), [agents]);
   const showNoAvailabilityNote = agents.length > 0 && !anyAvailability;
 
-  const handleClearSchedule = () => {
+  // Check for gaps before generating
+  const coverageSummary = useMemo(() => {
+    if (agents.length === 0) return null;
+    const coverage = calculateCoverage(agents);
+    return getWeekCoverageSummary(coverage);
+  }, [agents]);
+
+  const handleSuggestSchedule = useCallback(() => {
+    if (coverageSummary && coverageSummary.gapShifts > 0) {
+      const { gapShifts, gapDetails } = coverageSummary;
+      const gapText = gapShifts <= 3
+        ? gapDetails.map(g => `${g.day} ${g.shift}`).join(', ')
+        : `${gapShifts} shifts`;
+      const confirmed = window.confirm(
+        `Warning: ${gapText} ${gapShifts === 1 ? 'has' : 'have'} no available agents.\n\n` +
+        `These shifts will remain unassigned. Continue anyway?`
+      );
+      if (!confirmed) return;
+    }
+    suggestSchedule();
+  }, [coverageSummary, suggestSchedule]);
+
+  const handleClearSchedule = useCallback(() => {
     if (window.confirm('Clear all shift assignments for this week?')) {
       clearSchedule();
     }
-  };
+  }, [clearSchedule]);
 
   return (
     <div className="schedule-grid-container">
@@ -152,7 +176,7 @@ export function ScheduleGrid() {
         <div className="schedule-actions">
           <button
             className="schedule-btn suggest"
-            onClick={suggestSchedule}
+            onClick={handleSuggestSchedule}
             disabled={agents.length === 0 || !anyAvailability}
           >
             Suggest Week
