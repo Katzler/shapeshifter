@@ -51,7 +51,7 @@ function CoverageBanner() {
   return (
     <div className="coverage-banner coverage-banner--covered">
       <span className="coverage-banner__icon">✓</span>
-      <span className="coverage-banner__text">All {totalShifts} shifts have available coverage</span>
+      <span className="coverage-banner__text">All {totalShifts} shifts covered</span>
     </div>
   );
 }
@@ -84,7 +84,7 @@ function DesktopContent() {
       </aside>
       <main className="main-content">
         <h1>ShapeShifter</h1>
-        <CoverageBanner />
+        {activeView !== 'coverage' && <CoverageBanner />}
         <ViewTabs activeView={activeView} onViewChange={setActiveView} />
         {renderView()}
       </main>
