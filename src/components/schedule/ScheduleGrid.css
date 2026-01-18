@@ -174,12 +174,20 @@
   font-weight: 400;
 }
 
-.summary-item.under .summary-hours {
-  color: var(--color-unavailable);
+/* Exact match - green */
+.summary-item--exact .summary-hours {
+  color: var(--color-available);
   font-weight: 500;
 }
 
-.summary-item.over .summary-hours {
-  color: var(--color-warning);
+/* Close (within ±5h) - amber */
+.summary-item--close .summary-hours {
+  color: var(--color-neutral);
+  font-weight: 500;
+}
+
+/* Far (beyond ±5h) - red */
+.summary-item--far .summary-hours {
+  color: var(--color-unavailable);
   font-weight: 500;
 }

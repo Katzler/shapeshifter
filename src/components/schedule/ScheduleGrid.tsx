@@ -118,14 +118,15 @@ function ScheduleSummary() {
           const assigned = agentHours.get(agent.id) ?? 0;
           const target = agent.contractHoursPerWeek;
           const status = getHourStatus(assigned, target);
+          const direction = assigned < target ? 'under' : assigned > target ? 'over' : null;
 
           return (
-            <div key={agent.id} className={`summary-item ${status}`}>
+            <div key={agent.id} className={`summary-item summary-item--${status}`}>
               <span className="summary-name">{agent.name}</span>
               <span className="summary-hours">
                 {assigned}h / {target}h
-                {status === 'under' && ' ↓'}
-                {status === 'over' && ' ↑'}
+                {direction === 'under' && ' ↓'}
+                {direction === 'over' && ' ↑'}
               </span>
             </div>
           );
