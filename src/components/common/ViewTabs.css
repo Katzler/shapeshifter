@@ -1,16 +1,16 @@
 .view-tabs {
   display: inline-flex;
   gap: 2px;
-  padding: 3px;
-  background: var(--color-bg);
+  padding: 4px;
+  background: var(--color-bg-solid);
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-6);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
   border: 1px solid var(--color-border);
 }
 
 .view-tab {
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-2) var(--space-5);
   background: transparent;
   border: none;
   border-radius: var(--radius-md);
@@ -18,14 +18,20 @@
   font-weight: 500;
   font-size: var(--font-size-sm);
   transition: all var(--transition-fast);
+  position: relative;
 }
 
 .view-tab:hover {
   color: var(--color-text-secondary);
+  background-color: var(--color-bg-elevated);
 }
 
 .view-tab.active {
   color: var(--color-text);
-  background-color: var(--color-bg-subtle);
-  box-shadow: var(--shadow-xs);
+  background: var(--gradient-primary);
+  box-shadow: var(--shadow-sm), 0 0 16px rgba(139, 92, 246, 0.3);
+}
+
+.view-tab.active:hover {
+  box-shadow: var(--shadow-md), 0 0 20px rgba(139, 92, 246, 0.4);
 }

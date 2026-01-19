@@ -12,9 +12,9 @@
 }
 
 .preference-grid-title {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-xl);
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   margin-bottom: var(--space-5);
   color: var(--color-text);
 }
