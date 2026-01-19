@@ -3,7 +3,11 @@ import { useApp } from '../../store';
 import { useEditableField } from '../../hooks';
 import './AddAgent.css';
 
-export function AddAgent() {
+interface AddAgentProps {
+  onAgentAdd?: () => void;
+}
+
+export function AddAgent({ onAgentAdd }: AddAgentProps) {
   const { addAgent, selectAgent } = useApp();
   const [isAdding, setIsAdding] = useState(false);
 
@@ -14,6 +18,7 @@ export function AddAgent() {
       if (trimmed) {
         const agent = addAgent(trimmed);
         selectAgent(agent.id);
+        onAgentAdd?.();
       }
       setIsAdding(false);
     },

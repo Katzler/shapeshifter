@@ -35,7 +35,7 @@ function DesktopContent() {
         <WorkspaceSelector />
         <h2>Agents</h2>
         <AgentList onAgentSelect={handleAgentSelect} />
-        <AddAgent />
+        <AddAgent onAgentAdd={handleAgentSelect} />
         <DataActions />
       </aside>
       <main className="main-content">
