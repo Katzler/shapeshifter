@@ -86,7 +86,7 @@ function DesktopContent() {
         <DataActions />
       </aside>
       <main className="main-content">
-        <h1>ShapeShifter</h1>
+        <img src={`${import.meta.env.BASE_URL}shapeshifter_logo.svg`} alt="ShapeShifter" className="app-logo" />
         {activeView !== 'coverage' && <CoverageBanner />}
         <ViewTabs activeView={activeView} onViewChange={setActiveView} />
         {renderView()}

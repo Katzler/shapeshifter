@@ -1,25 +1,41 @@
 .app {
   display: flex;
   height: 100%;
+  background: var(--color-bg-page);
 }
 
 .sidebar {
   width: var(--sidebar-width);
   min-width: var(--sidebar-width);
-  background: var(--color-bg);
+  background: var(--color-bg-solid);
   border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  padding: var(--space-4) var(--space-3);
+  padding: var(--space-5) var(--space-3);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  z-index: 10;
+}
+
+/* Subtle gradient accent at top of sidebar */
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-primary);
+  opacity: 0.7;
 }
 
 .sidebar h2 {
   font-size: var(--font-size-xs);
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   color: var(--color-text-muted);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
   padding: 0 var(--space-2);
 }
 
@@ -28,14 +44,42 @@
   padding: var(--space-8) var(--space-10);
   overflow: auto;
   background: var(--color-bg-page);
+  position: relative;
+}
+
+/* Subtle radial glow in background */
+.main-content::before {
+  content: '';
+  position: fixed;
+  top: -20%;
+  right: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.main-content > * {
+  position: relative;
+  z-index: 1;
 }
 
 .main-content h1 {
-  font-size: var(--font-size-2xl);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  margin-bottom: var(--space-5);
-  color: var(--color-text);
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: var(--space-6);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.app-logo {
+  height: 40px;
+  width: auto;
+  margin-bottom: var(--space-6);
 }
 
 .placeholder {
@@ -47,29 +91,38 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
   font-size: var(--font-size-sm);
   font-weight: 500;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-5);
+  border: 1px solid transparent;
+  backdrop-filter: var(--glass-blur);
 }
 
 .coverage-banner__icon {
   font-weight: 700;
   flex-shrink: 0;
+  font-size: var(--font-size-base);
 }
 
 .coverage-banner--covered {
   background: var(--color-available-bg);
   color: var(--color-available);
+  border-color: rgba(52, 211, 153, 0.2);
+  box-shadow: var(--color-available-glow);
 }
 
 .coverage-banner--tight {
   background: var(--color-neutral-bg);
   color: var(--color-neutral);
+  border-color: rgba(251, 191, 36, 0.2);
+  box-shadow: var(--color-neutral-glow);
 }
 
 .coverage-banner--gap {
   background: var(--color-unavailable-bg);
   color: var(--color-unavailable);
+  border-color: rgba(248, 113, 113, 0.2);
+  box-shadow: var(--color-unavailable-glow);
 }
