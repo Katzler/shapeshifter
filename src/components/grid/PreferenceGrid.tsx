@@ -23,6 +23,20 @@ export function PreferenceGrid() {
   return (
     <div className="preference-grid-container">
       <h2 className="preference-grid-title">{selectedAgent.name}</h2>
+      <div className="preference-legend">
+        <span className="legend-item">
+          <span className="legend-dot available" />
+          Available
+        </span>
+        <span className="legend-item">
+          <span className="legend-dot neutral" />
+          Neutral
+        </span>
+        <span className="legend-item">
+          <span className="legend-dot unavailable" />
+          Unavailable
+        </span>
+      </div>
       <ShiftGrid
         className="preference-grid"
         renderCell={(day, shift) => (
