@@ -1,6 +1,6 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import './App.css'
-import { AppProvider, useApp } from './store'
+import { AppProvider } from './store'
 import { AgentList, AddAgent } from './components/agents'
 import { PreferenceGrid } from './components/grid'
 import { CoverageGrid } from './components/coverage'
@@ -9,53 +9,6 @@ import { ViewTabs, type ViewType, DataActions, SaveErrorBanner } from './compone
 import { MobileShell } from './components/mobile'
 import { WorkspaceSelector } from './components/workspace'
 import { useIsMobile, ConfirmProvider } from './hooks'
-import { calculateCoverage, getWeekCoverageSummary } from './domain'
-
-function CoverageBanner() {
-  const { agents } = useApp();
-
-  const summary = useMemo(() => {
-    if (agents.length === 0) return null;
-    const coverage = calculateCoverage(agents);
-    return getWeekCoverageSummary(coverage);
-  }, [agents]);
-
-  if (!summary) return null;
-
-  const { gapShifts, tightShifts, totalShifts, gapDetails } = summary;
-
-  if (gapShifts > 0) {
-    const gapText = gapShifts === 1
-      ? `1 gap: ${gapDetails[0].day} ${gapDetails[0].shift}`
-      : gapShifts <= 3
-        ? `${gapShifts} gaps: ${gapDetails.map(g => `${g.day} ${g.shift}`).join(', ')}`
-        : `${gapShifts} gaps across the week`;
-    return (
-      <div className="coverage-banner coverage-banner--gap">
-        <span className="coverage-banner__icon">!</span>
-        <span className="coverage-banner__text">{gapText}</span>
-      </div>
-    );
-  }
-
-  if (tightShifts > 0) {
-    return (
-      <div className="coverage-banner coverage-banner--tight">
-        <span className="coverage-banner__icon">~</span>
-        <span className="coverage-banner__text">
-          {tightShifts} shift{tightShifts !== 1 ? 's' : ''} with only neutral availability
-        </span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="coverage-banner coverage-banner--covered">
-      <span className="coverage-banner__icon">✓</span>
-      <span className="coverage-banner__text">All {totalShifts} shifts covered</span>
-    </div>
-  );
-}
 
 function DesktopContent() {
   const [activeView, setActiveView] = useState<ViewType>('schedule')
@@ -87,7 +40,6 @@ function DesktopContent() {
       </aside>
       <main className="main-content">
         <img src={`${import.meta.env.BASE_URL}shapeshifter_logo.svg`} alt="ShapeShifter" className="app-logo" />
-        {activeView !== 'coverage' && <CoverageBanner />}
         <ViewTabs activeView={activeView} onViewChange={setActiveView} />
         {renderView()}
       </main>
