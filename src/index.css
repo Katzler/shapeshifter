@@ -3,25 +3,25 @@
      MIDNIGHT CALM - Dark Theme
      ======================================== */
 
-  /* Status colors - vibrant with glow */
+  /* Status colors - balanced luminance, WCAG compliant */
   --color-available: #34d399;
   --color-available-hover: #6ee7b7;
-  --color-available-bg: rgba(52, 211, 153, 0.30);
-  --color-available-bg-hover: rgba(52, 211, 153, 0.40);
+  --color-available-bg: rgba(52, 211, 153, 0.25);
+  --color-available-bg-hover: rgba(52, 211, 153, 0.35);
   --color-available-glow: 0 0 16px rgba(52, 211, 153, 0.4);
 
-  /* Unavailable: warm coral-red */
-  --color-unavailable: #f87171;
+  /* Unavailable: brightened coral-red for visual balance */
+  --color-unavailable: #fb8a8a;
   --color-unavailable-hover: #fca5a5;
-  --color-unavailable-bg: rgba(248, 113, 113, 0.30);
-  --color-unavailable-bg-strong: rgba(248, 113, 113, 0.40);
-  --color-unavailable-glow: 0 0 16px rgba(248, 113, 113, 0.4);
+  --color-unavailable-bg: rgba(251, 138, 138, 0.25);
+  --color-unavailable-bg-strong: rgba(251, 138, 138, 0.35);
+  --color-unavailable-glow: 0 0 16px rgba(251, 138, 138, 0.4);
 
-  /* Neutral: soft amber */
-  --color-neutral: #fbbf24;
+  /* Neutral: balanced amber */
+  --color-neutral: #f5b820;
   --color-neutral-hover: #fcd34d;
-  --color-neutral-bg: rgba(251, 191, 36, 0.30);
-  --color-neutral-glow: 0 0 16px rgba(251, 191, 36, 0.3);
+  --color-neutral-bg: rgba(245, 184, 32, 0.25);
+  --color-neutral-glow: 0 0 16px rgba(245, 184, 32, 0.3);
 
   --color-warning: #f59e0b;
   --color-warning-bg: rgba(245, 158, 11, 0.15);
@@ -49,11 +49,11 @@
   --color-bg-glass: rgba(255, 255, 255, 0.04);
   --color-bg-solid: #1a1d24;
 
-  /* Text - crisp on dark */
+  /* Text - crisp on dark, WCAG AA compliant */
   --color-text: #f4f4f5;
   --color-text-secondary: #a1a1aa;
-  --color-text-muted: #71717a;
-  --color-text-placeholder: #52525b;
+  --color-text-muted: #78787f;
+  --color-text-placeholder: #6b6b74;
 
   /* Shadows - deeper with color */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);

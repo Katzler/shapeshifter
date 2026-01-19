@@ -112,12 +112,17 @@
   font-size: var(--font-size-xs);
   font-weight: 500;
   background: transparent;
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   cursor: pointer;
   transition: all var(--transition-fast);
   text-align: center;
   appearance: none;
   text-overflow: ellipsis;
+}
+
+/* Unassigned cells use muted text */
+.schedule-cell.unassigned select {
+  color: var(--color-text-muted);
 }
 
 .schedule-cell select:hover {

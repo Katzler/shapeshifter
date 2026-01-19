@@ -116,13 +116,13 @@
 .coverage-banner--tight {
   background: var(--color-neutral-bg);
   color: var(--color-neutral);
-  border-color: rgba(251, 191, 36, 0.2);
+  border-color: rgba(245, 184, 32, 0.2);
   box-shadow: var(--color-neutral-glow);
 }
 
 .coverage-banner--gap {
   background: var(--color-unavailable-bg);
   color: var(--color-unavailable);
-  border-color: rgba(248, 113, 113, 0.2);
+  border-color: rgba(251, 138, 138, 0.2);
   box-shadow: var(--color-unavailable-glow);
 }

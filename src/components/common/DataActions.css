@@ -14,7 +14,7 @@
   justify-content: center;
   gap: var(--space-1);
   padding: var(--space-2) var(--space-3);
-  background: var(--color-bg-subtle);
+  background: var(--color-bg-elevated);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   color: var(--color-text-muted);
@@ -24,9 +24,14 @@
 }
 
 .data-action-btn:hover {
-  border-color: var(--color-border-dark);
-  color: var(--color-text-secondary);
-  background: var(--color-bg);
+  border-color: var(--color-border-glow);
+  color: var(--color-primary);
+  background: var(--color-primary-subtle);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.15);
+}
+
+.data-action-btn:active {
+  transform: scale(0.97);
 }
 
 .data-action-btn .icon {
@@ -36,9 +41,10 @@
 .import-confirm {
   flex: 1;
   text-align: center;
-  padding: var(--space-3);
-  background: var(--color-unavailable-bg);
-  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-lg);
 }
 
 .confirm-info {
@@ -64,40 +70,46 @@
   width: 100%;
   padding: var(--space-2) var(--space-3);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   font-size: var(--font-size-xs);
-  font-weight: 500;
+  font-weight: 600;
   transition: all var(--transition-fast);
   cursor: pointer;
 }
 
+.confirm-btn:active {
+  transform: scale(0.97);
+}
+
 .confirm-btn.new {
-  background-color: var(--color-primary);
+  background: var(--gradient-primary);
   color: white;
+  box-shadow: var(--glow-primary);
 }
 
 .confirm-btn.new:hover {
-  background-color: var(--color-primary-hover);
+  box-shadow: 0 0 24px rgba(139, 92, 246, 0.6);
 }
 
 .confirm-btn.replace {
-  background-color: var(--color-bg);
-  border: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-dark);
   color: var(--color-text-secondary);
 }
 
 .confirm-btn.replace:hover {
-  background-color: var(--color-bg-subtle);
-  border-color: var(--color-border-dark);
+  background: var(--color-bg-glass);
+  border-color: var(--color-border-glow);
+  color: var(--color-text);
 }
 
 .confirm-btn.cancel {
-  background-color: transparent;
+  background: transparent;
   color: var(--color-text-muted);
 }
 
 .confirm-btn.cancel:hover {
-  background-color: var(--color-bg-subtle);
+  background: var(--color-bg-elevated);
   color: var(--color-text-secondary);
 }
 
@@ -106,26 +118,28 @@
   text-align: center;
   font-size: var(--font-size-sm);
   font-weight: 500;
-  padding: var(--space-2);
-  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
 }
 
 .import-status.loading {
   color: var(--color-text-muted);
-  background: var(--color-bg-subtle);
+  background: var(--color-bg-elevated);
 }
 
 .import-status.success {
   color: var(--color-available);
   background: var(--color-available-bg);
+  box-shadow: var(--color-available-glow);
 }
 
 .import-error {
   flex: 1;
   text-align: center;
-  padding: var(--space-3);
+  padding: var(--space-4);
   background: var(--color-unavailable-bg);
-  border-radius: var(--radius-md);
+  border: 1px solid rgba(251, 138, 138, 0.2);
+  border-radius: var(--radius-lg);
 }
 
 .error-message {
@@ -136,8 +150,8 @@
 
 .dismiss-btn {
   padding: var(--space-1) var(--space-3);
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-dark);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-xs);
   font-weight: 500;
@@ -146,6 +160,7 @@
 }
 
 .dismiss-btn:hover {
-  background-color: var(--color-bg-subtle);
-  border-color: var(--color-border-dark);
+  background: var(--color-bg-glass);
+  border-color: var(--color-border-glow);
+  color: var(--color-text);
 }

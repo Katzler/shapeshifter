@@ -3,16 +3,16 @@
 }
 
 .coverage-grid-title {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-xl);
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   margin-bottom: var(--space-3);
   color: var(--color-text);
 }
 
 .coverage-legend {
   display: flex;
-  gap: var(--space-5);
+  gap: var(--space-6);
   margin-bottom: var(--space-5);
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
@@ -29,18 +29,22 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
 }
 
 .legend-dot.available {
   background-color: var(--color-available);
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.5);
 }
 
 .legend-dot.unavailable {
   background-color: var(--color-unavailable);
+  box-shadow: 0 0 8px rgba(251, 138, 138, 0.5);
 }
 
 .legend-dot.neutral {
   background-color: var(--color-neutral);
+  box-shadow: 0 0 8px rgba(245, 184, 32, 0.5);
 }
 
 /* Coverage cell - full-width tinted background like other grids */
@@ -51,7 +55,7 @@
   gap: var(--space-2);
   padding: var(--space-2);
   min-height: 52px;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 /* Covered state - green (has preferred agents) */
@@ -75,23 +79,27 @@
   font-weight: 600;
   min-width: 18px;
   text-align: center;
+  font-feature-settings: 'tnum';
 }
 
 .coverage-cell .count.available {
   color: var(--color-available);
+  text-shadow: 0 0 8px rgba(52, 211, 153, 0.3);
 }
 
 .coverage-cell .count.unavailable {
   color: var(--color-unavailable);
+  text-shadow: 0 0 8px rgba(251, 138, 138, 0.3);
 }
 
 .coverage-cell .count.neutral {
   color: var(--color-neutral);
+  text-shadow: 0 0 8px rgba(245, 184, 32, 0.3);
 }
 
 /* Separator between counts */
 .coverage-cell .separator {
-  color: var(--color-border-dark);
+  color: var(--color-text-placeholder);
   font-size: var(--font-size-xs);
 }
 

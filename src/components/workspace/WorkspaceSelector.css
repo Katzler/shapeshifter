@@ -8,21 +8,23 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: var(--space-2) var(--space-3);
-  background: var(--color-bg-subtle);
+  padding: var(--space-3) var(--space-3);
+  background: var(--color-bg-elevated);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .workspace-trigger:hover {
-  background: var(--color-border);
+  background: var(--color-bg-glass);
+  border-color: var(--color-border-dark);
 }
 
 .workspace-trigger.expanded {
-  border-color: var(--color-primary);
-  background: var(--color-bg);
+  border-color: var(--color-border-glow);
+  background: var(--color-bg-solid);
+  box-shadow: var(--shadow-focus);
 }
 
 .workspace-trigger-name {
@@ -39,19 +41,36 @@
   color: var(--color-text-muted);
   margin-left: var(--space-2);
   flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.workspace-trigger.expanded .workspace-trigger-chevron {
+  transform: rotate(180deg);
 }
 
 .workspace-dropdown {
   position: absolute;
-  top: calc(100% + var(--space-1));
+  top: calc(100% + var(--space-2));
   left: 0;
   right: 0;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-dropdown);
+  background: var(--color-bg-solid);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   z-index: 100;
   overflow: hidden;
+  animation: dropdownSlide var(--transition-fast) ease-out;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .workspace-list {
@@ -65,20 +84,21 @@
 .workspace-item {
   display: flex;
   align-items: center;
-  padding: var(--space-2);
+  padding: var(--space-2) var(--space-3);
   cursor: pointer;
-  border-radius: var(--radius-sm);
-  transition: background-color var(--transition-fast);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
   gap: var(--space-2);
-  min-height: 32px;
+  min-height: 36px;
 }
 
 .workspace-item:hover {
-  background: var(--color-bg-subtle);
+  background: var(--color-bg-elevated);
 }
 
 .workspace-item.active {
   background: var(--color-primary-subtle);
+  border: 1px solid var(--color-border-glow);
 }
 
 .workspace-item.active:hover {
@@ -94,7 +114,7 @@
 }
 
 .workspace-item.active .workspace-indicator {
-  color: var(--color-primary);
+  color: var(--color-primary-hover);
 }
 
 .workspace-name {
@@ -108,7 +128,7 @@
 }
 
 .workspace-item.active .workspace-name {
-  color: var(--color-primary);
+  color: var(--color-primary-hover);
   font-weight: 600;
 }
 
@@ -123,7 +143,7 @@
   padding: var(--space-1);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: opacity var(--transition-fast), background-color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .workspace-delete-button {
@@ -132,14 +152,14 @@
 
 .workspace-item:hover .workspace-edit-button,
 .workspace-item:hover .workspace-delete-button {
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
 .workspace-edit-button:hover,
 .workspace-delete-button:hover {
   opacity: 1 !important;
-  background: var(--color-border);
-  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  color: var(--color-text);
 }
 
 .workspace-item.active .workspace-edit-button,
@@ -149,7 +169,7 @@
 
 .workspace-item.active .workspace-edit-button:hover,
 .workspace-item.active .workspace-delete-button:hover {
-  background: var(--color-primary-subtle);
+  background: rgba(139, 92, 246, 0.2);
   color: var(--color-primary-hover);
 }
 
@@ -160,18 +180,20 @@
   border-radius: var(--radius-sm);
   outline: none;
   min-width: 0;
-  background: var(--color-bg);
+  background: var(--color-bg-solid);
+  color: var(--color-text);
   box-shadow: var(--shadow-focus);
   font-size: var(--font-size-sm);
 }
 
 .workspace-item.confirming {
   background: var(--color-unavailable-bg);
+  border: 1px solid rgba(251, 138, 138, 0.2);
   justify-content: space-between;
 }
 
 .workspace-item.confirming .confirm-text {
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   font-weight: 500;
   font-size: var(--font-size-sm);
   overflow: hidden;
@@ -191,34 +213,37 @@
   border: none;
   border-radius: var(--radius-sm);
   font-size: var(--font-size-xs);
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .workspace-item.confirming .confirm-yes {
   background: var(--color-unavailable);
   color: white;
+  box-shadow: 0 0 12px rgba(251, 138, 138, 0.3);
 }
 
 .workspace-item.confirming .confirm-yes:hover {
   background: var(--color-unavailable-hover);
+  box-shadow: 0 0 16px rgba(251, 138, 138, 0.5);
 }
 
 .workspace-item.confirming .confirm-no {
-  background: var(--color-bg);
+  background: var(--color-bg-elevated);
   color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-dark);
 }
 
 .workspace-item.confirming .confirm-no:hover {
-  background: var(--color-bg-subtle);
+  background: var(--color-bg-glass);
+  color: var(--color-text);
 }
 
 .workspace-create-button {
   display: block;
   width: 100%;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-3);
   background: transparent;
   border: none;
   border-top: 1px solid var(--color-border);
@@ -227,12 +252,12 @@
   font-weight: 500;
   color: var(--color-text-muted);
   cursor: pointer;
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .workspace-create-button:hover {
-  background: var(--color-bg-subtle);
-  color: var(--color-text);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
 }
 
 .workspace-create-form {
@@ -244,9 +269,14 @@
   width: 100%;
   padding: var(--space-2);
   border: 1px solid var(--color-primary);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   outline: none;
-  background: var(--color-bg);
+  background: var(--color-bg-solid);
+  color: var(--color-text);
   box-shadow: var(--shadow-focus);
   font-size: var(--font-size-sm);
+}
+
+.workspace-create-input::placeholder {
+  color: var(--color-text-placeholder);
 }
