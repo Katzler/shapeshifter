@@ -76,12 +76,6 @@
   background-clip: text;
 }
 
-.app-logo {
-  height: 40px;
-  width: auto;
-  margin-bottom: var(--space-6);
-}
-
 .placeholder {
   color: var(--color-text-muted);
 }

@@ -39,7 +39,7 @@ function DesktopContent() {
         <DataActions />
       </aside>
       <main className="main-content">
-        <img src={`${import.meta.env.BASE_URL}shapeshifter_logo.svg`} alt="ShapeShifter" className="app-logo" />
+        <h1>ShapeShifter</h1>
         <ViewTabs activeView={activeView} onViewChange={setActiveView} />
         {renderView()}
       </main>

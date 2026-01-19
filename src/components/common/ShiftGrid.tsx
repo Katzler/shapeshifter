@@ -37,7 +37,6 @@ export function ShiftGrid({ className = '', renderCell }: ShiftGridProps) {
             key={`${shift.id}-header`}
             className="grid-cell grid-header shift-header"
           >
-            <span className="shift-label">{shift.label}</span>
             <span className="shift-time">
               {shift.startTime}–{shift.endTime}
             </span>
