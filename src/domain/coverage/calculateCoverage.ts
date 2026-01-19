@@ -5,13 +5,23 @@ export interface CoverageCount {
   available: number;
   unavailable: number;
   neutral: number;
+  availableAgents: string[];
+  unavailableAgents: string[];
+  neutralAgents: string[];
 }
 
 export type ShiftCoverage = Record<ShiftId, CoverageCount>;
 export type WeekCoverage = Record<DayOfWeek, ShiftCoverage>;
 
 function createEmptyCoverageCount(): CoverageCount {
-  return { available: 0, unavailable: 0, neutral: 0 };
+  return {
+    available: 0,
+    unavailable: 0,
+    neutral: 0,
+    availableAgents: [],
+    unavailableAgents: [],
+    neutralAgents: [],
+  };
 }
 
 function createEmptyShiftCoverage(): ShiftCoverage {
@@ -51,6 +61,13 @@ export function calculateCoverage(agents: Agent[]): WeekCoverage {
       for (const shift of SHIFTS) {
         const status = agent.preferences[day.id][shift.id];
         coverage[day.id][shift.id][status]++;
+        if (status === 'available') {
+          coverage[day.id][shift.id].availableAgents.push(agent.name);
+        } else if (status === 'neutral') {
+          coverage[day.id][shift.id].neutralAgents.push(agent.name);
+        } else {
+          coverage[day.id][shift.id].unavailableAgents.push(agent.name);
+        }
       }
     }
   }
