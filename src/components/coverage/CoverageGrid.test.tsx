@@ -1,6 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '../../test/testUtils';
-import userEvent from '@testing-library/user-event';
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '../../test/testUtils';
 import { CoverageGrid } from './CoverageGrid';
 
 describe('CoverageGrid', () => {

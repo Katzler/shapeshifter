@@ -17,8 +17,10 @@ function createTestAgent(
 
   // Apply overrides
   for (const [day, shifts] of Object.entries(overrides)) {
-    for (const [shift, status] of Object.entries(shifts)) {
-      (preferences as Record<string, Record<string, string>>)[day][shift] = status;
+    if (shifts) {
+      for (const [shift, status] of Object.entries(shifts)) {
+        (preferences as Record<string, Record<string, string>>)[day][shift] = status;
+      }
     }
   }
 
