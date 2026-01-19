@@ -200,6 +200,17 @@ export function ScheduleGrid() {
         </div>
       </div>
 
+      <div className="schedule-legend">
+        <span className="legend-item">
+          <span className="legend-dot available" />
+          Available
+        </span>
+        <span className="legend-item">
+          <span className="legend-dot neutral" />
+          Neutral
+        </span>
+      </div>
+
       {agents.length === 0 ? (
         <p className="schedule-empty">Add agents to create a schedule.</p>
       ) : (

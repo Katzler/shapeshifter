@@ -12,11 +12,19 @@
 }
 
 .schedule-header h2 {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-xl);
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   margin: 0;
   color: var(--color-text);
+}
+
+.schedule-legend {
+  display: flex;
+  gap: var(--space-6);
+  margin-bottom: var(--space-5);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
 }
 
 .schedule-actions {
