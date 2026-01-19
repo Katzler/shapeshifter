@@ -7,31 +7,42 @@
   border: none;
   padding: var(--space-2);
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-base);
   font-size: var(--font-size-sm);
   font-weight: 600;
+  position: relative;
+  overflow: hidden;
 }
 
 .preference-cell:hover {
-  filter: brightness(0.96);
+  transform: scale(1.02);
+  z-index: 2;
+}
+
+.preference-cell:active {
+  transform: scale(0.96);
+  transition: transform var(--transition-fast);
 }
 
 .preference-cell:focus-visible {
   outline: none;
-  box-shadow: inset 0 0 0 2px var(--color-primary);
-  z-index: 1;
+  box-shadow: inset 0 0 0 2px var(--color-primary), var(--shadow-focus);
+  z-index: 3;
 }
 
+/* Neutral state */
 .preference-cell.status-neutral {
   background-color: var(--color-neutral-bg);
   color: var(--color-neutral);
 }
 
+/* Available state */
 .preference-cell.status-available {
   background-color: var(--color-available-bg);
   color: var(--color-available);
 }
 
+/* Unavailable state */
 .preference-cell.status-unavailable {
   background-color: var(--color-unavailable-bg);
   color: var(--color-unavailable);
@@ -39,4 +50,26 @@
 
 .status-icon {
   user-select: none;
+  transition: transform var(--transition-bounce);
+}
+
+.preference-cell:active .status-icon {
+  transform: scale(0.85);
+}
+
+/* Pulse animation on status change */
+@keyframes status-pulse {
+  0% {
+    box-shadow: inset 0 0 0 0 currentColor;
+  }
+  50% {
+    box-shadow: inset 0 0 24px 0 currentColor;
+  }
+  100% {
+    box-shadow: inset 0 0 0 0 currentColor;
+  }
+}
+
+.preference-cell.status-changed {
+  animation: status-pulse 400ms ease-out;
 }
