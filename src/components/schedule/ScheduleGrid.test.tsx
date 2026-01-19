@@ -21,8 +21,8 @@ describe('ScheduleGrid', () => {
 
   it('renders action buttons', () => {
     render(<ScheduleGrid />);
-    expect(screen.getByText('Suggest Week')).toBeInTheDocument();
-    expect(screen.getByText('Clear Schedule')).toBeInTheDocument();
+    expect(screen.getByText('Autofill')).toBeInTheDocument();
+    expect(screen.getByText('Clear')).toBeInTheDocument();
   });
 
   it('shows empty state when no agents', () => {
@@ -30,9 +30,9 @@ describe('ScheduleGrid', () => {
     expect(screen.getByText('Add agents to create a schedule.')).toBeInTheDocument();
   });
 
-  it('disables Suggest Week button when no agents', () => {
+  it('disables Autofill button when no agents', () => {
     render(<ScheduleGrid />);
-    const suggestButton = screen.getByText('Suggest Week');
+    const suggestButton = screen.getByText('Autofill');
     expect(suggestButton).toBeDisabled();
   });
 });

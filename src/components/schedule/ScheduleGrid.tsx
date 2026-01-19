@@ -192,10 +192,10 @@ export function ScheduleGrid() {
             onClick={handleSuggestSchedule}
             disabled={agents.length === 0 || !anyAvailability}
           >
-            Suggest Week
+            Autofill
           </button>
           <button className="schedule-btn clear" onClick={handleClearSchedule}>
-            Clear Schedule
+            Clear
           </button>
         </div>
       </div>
