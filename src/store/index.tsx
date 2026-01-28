@@ -40,6 +40,7 @@ interface AppContextValue {
   // Workspace state
   currentWorkspace: WorkspaceMeta;
   workspaces: WorkspaceMeta[];
+  userRole: 'admin' | 'agent' | null;
 
   // Existing actions
   addAgent: (name: string) => Agent;
@@ -69,7 +70,11 @@ interface AppContextValue {
   importAsNewWorkspace: (data: AppData, name: string) => WorkspaceMeta | null;
 }
 
-const AppContext = createContext<AppContextValue | null>(null);
+// Export the context so SupabaseAppProvider can also use it
+export const AppContext = createContext<AppContextValue | null>(null);
+
+// Export the context value type for type safety
+export type { AppContextValue };
 
 // Provider component
 interface AppProviderProps {
@@ -403,6 +408,7 @@ export function AppProvider({ children }: AppProviderProps) {
     saveError,
     currentWorkspace,
     workspaces,
+    userRole: 'admin', // localStorage mode is always single-user admin
     addAgent,
     renameAgent,
     deleteAgent,

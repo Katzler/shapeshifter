@@ -11,6 +11,7 @@ interface WorkspaceItemProps {
   onRename: (name: string) => void;
   onDelete: () => void;
   canDelete: boolean;
+  canEdit?: boolean;
 }
 
 function WorkspaceItem({
@@ -20,6 +21,7 @@ function WorkspaceItem({
   onRename,
   onDelete,
   canDelete,
+  canEdit = true,
 }: WorkspaceItemProps) {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
@@ -92,13 +94,15 @@ function WorkspaceItem({
         <>
           <span className="workspace-indicator">{isActive ? '●' : '○'}</span>
           <span className="workspace-name">{workspace.name}</span>
-          <button
-            className="workspace-edit-button"
-            onClick={handleEditClick}
-            title="Rename workspace"
-          >
-            ✎
-          </button>
+          {canEdit && (
+            <button
+              className="workspace-edit-button"
+              onClick={handleEditClick}
+              title="Rename workspace"
+            >
+              ✎
+            </button>
+          )}
           {canDelete && (
             <button
               className="workspace-delete-button"
@@ -118,16 +122,14 @@ export function WorkspaceSelector() {
   const {
     currentWorkspace,
     workspaces,
-    createWorkspace,
     switchWorkspace,
     renameWorkspace,
-    deleteWorkspace,
+    userRole,
   } = useApp();
 
+  const isAdmin = userRole === 'admin';
+
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
-  const [newName, setNewName] = useState('');
-  const newNameInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -135,8 +137,6 @@ export function WorkspaceSelector() {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsExpanded(false);
-        setIsCreating(false);
-        setNewName('');
       }
     }
 
@@ -146,54 +146,23 @@ export function WorkspaceSelector() {
     }
   }, [isExpanded]);
 
-  // Focus input when creating
-  useEffect(() => {
-    if (isCreating && newNameInputRef.current) {
-      newNameInputRef.current.focus();
-    }
-  }, [isCreating]);
-
   const handleToggle = useCallback(() => {
     setIsExpanded((prev) => !prev);
-    setIsCreating(false);
-    setNewName('');
   }, []);
-
-  const handleStartCreate = useCallback(() => {
-    setIsCreating(true);
-  }, []);
-
-  const handleCreateSubmit = useCallback(() => {
-    const trimmed = newName.trim();
-    if (trimmed) {
-      const created = createWorkspace(trimmed);
-      if (created) {
-        setIsExpanded(false);
-      }
-    }
-    setIsCreating(false);
-    setNewName('');
-  }, [newName, createWorkspace]);
-
-  const handleCreateCancel = useCallback(() => {
-    setIsCreating(false);
-    setNewName('');
-  }, []);
-
-  const handleCreateKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleCreateSubmit();
-    } else if (e.key === 'Escape') {
-      handleCreateCancel();
-    }
-  }, [handleCreateSubmit, handleCreateCancel]);
 
   const handleSwitch = useCallback((workspaceId: string) => {
     switchWorkspace(workspaceId);
     setIsExpanded(false);
   }, [switchWorkspace]);
 
-  const canDelete = workspaces.length > 1;
+  // Only show workspace switcher if user has multiple workspaces
+  if (workspaces.length <= 1) {
+    return (
+      <div className="workspace-selector">
+        <div className="workspace-single">{currentWorkspace.name}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="workspace-selector" ref={dropdownRef}>
@@ -215,30 +184,12 @@ export function WorkspaceSelector() {
                 isActive={workspace.id === currentWorkspace.id}
                 onSwitch={() => handleSwitch(workspace.id)}
                 onRename={(name) => renameWorkspace(workspace.id, name)}
-                onDelete={() => deleteWorkspace(workspace.id)}
-                canDelete={canDelete}
+                onDelete={() => {}}
+                canDelete={false}
+                canEdit={isAdmin}
               />
             ))}
           </ul>
-
-          {isCreating ? (
-            <div className="workspace-create-form">
-              <input
-                ref={newNameInputRef}
-                type="text"
-                className="workspace-create-input"
-                placeholder="Workspace name"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                onKeyDown={handleCreateKeyDown}
-                onBlur={handleCreateSubmit}
-              />
-            </div>
-          ) : (
-            <button className="workspace-create-button" onClick={handleStartCreate}>
-              + New workspace
-            </button>
-          )}
         </div>
       )}
     </div>

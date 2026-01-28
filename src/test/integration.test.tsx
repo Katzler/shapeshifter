@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, waitFor } from './testUtils';
 import userEvent from '@testing-library/user-event';
-import App from '../App';
+import { TestApp } from './TestApp';
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -30,7 +30,7 @@ describe('App Integration', () => {
   });
 
   it('renders the app with tabs', () => {
-    render(<App />);
+    render(<TestApp />);
 
     // Only Schedule and Coverage tabs exist
     expect(screen.getByRole('button', { name: 'Schedule' })).toBeInTheDocument();
@@ -38,13 +38,13 @@ describe('App Integration', () => {
   });
 
   it('shows add agent button', () => {
-    render(<App />);
+    render(<TestApp />);
     expect(screen.getByText('+ Add Agent')).toBeInTheDocument();
   });
 
   it('can add an agent', async () => {
     const user = userEvent.setup();
-    render(<App />);
+    render(<TestApp />);
 
     // Click add agent button
     await user.click(screen.getByText('+ Add Agent'));
@@ -62,7 +62,7 @@ describe('App Integration', () => {
 
   it('switches between tabs', async () => {
     const user = userEvent.setup();
-    render(<App />);
+    render(<TestApp />);
 
     // Default view is Schedule
     expect(screen.getByText('Weekly Schedule')).toBeInTheDocument();
@@ -84,7 +84,7 @@ describe('Coverage updates when agents change', () => {
 
   it('shows zero coverage with no agents', async () => {
     const user = userEvent.setup();
-    render(<App />);
+    render(<TestApp />);
 
     // Go to Coverage tab
     await user.click(screen.getByText('Coverage'));
@@ -102,7 +102,7 @@ describe('Schedule functionality', () => {
 
   it('shows empty schedule message with no agents', async () => {
     const user = userEvent.setup();
-    render(<App />);
+    render(<TestApp />);
 
     // Go to Schedule tab
     await user.click(screen.getByText('Schedule'));
@@ -112,7 +112,7 @@ describe('Schedule functionality', () => {
 
   it('has legend with Available and Neutral', async () => {
     const user = userEvent.setup();
-    render(<App />);
+    render(<TestApp />);
 
     // Go to Schedule tab
     await user.click(screen.getByText('Schedule'));

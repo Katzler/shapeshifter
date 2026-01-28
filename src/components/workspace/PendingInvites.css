@@ -1,0 +1,129 @@
+.pending-invites-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-page);
+  padding: 1rem;
+}
+
+.pending-invites-card {
+  background: var(--color-bg-solid);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 550px;
+  width: 100%;
+}
+
+.pending-invites-card h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  color: var(--color-text-primary);
+}
+
+.pending-invites-subtitle {
+  color: var(--color-text-secondary);
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem;
+}
+
+.invite-error {
+  background: var(--status-unavailable-bg, #fee2e2);
+  color: var(--status-unavailable-text, #dc2626);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.invites-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.invite-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--color-bg-page);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.invite-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.invite-workspace {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.invite-details {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+
+.invite-date {
+  color: var(--color-text-muted);
+}
+
+.invite-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.btn-decline {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-decline:hover:not(:disabled) {
+  background: var(--color-bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.btn-accept {
+  padding: 0.5rem 1rem;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.btn-accept:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.btn-accept:disabled,
+.btn-decline:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 500px) {
+  .invite-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .invite-actions {
+    justify-content: flex-end;
+  }
+}
