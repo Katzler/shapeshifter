@@ -10,7 +10,6 @@ export function AddAgent({ onAgentAdd }: AddAgentProps) {
   const { addAgent, selectAgent } = useApp();
   const [isAdding, setIsAdding] = useState(false);
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
   const nameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -22,27 +21,24 @@ export function AddAgent({ onAgentAdd }: AddAgentProps) {
   const handleStartAdding = useCallback(() => {
     setIsAdding(true);
     setName('');
-    setEmail('');
   }, []);
 
   const handleCancel = useCallback(() => {
     setIsAdding(false);
     setName('');
-    setEmail('');
   }, []);
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     const trimmedName = name.trim();
     if (trimmedName) {
-      const agent = addAgent(trimmedName, email.trim() || undefined);
+      const agent = addAgent(trimmedName);
       selectAgent(agent.id);
       onAgentAdd?.();
     }
     setIsAdding(false);
     setName('');
-    setEmail('');
-  }, [name, email, addAgent, selectAgent, onAgentAdd]);
+  }, [name, addAgent, selectAgent, onAgentAdd]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -58,15 +54,8 @@ export function AddAgent({ onAgentAdd }: AddAgentProps) {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Agent name *"
+          placeholder="Agent name"
           className="add-agent-input"
-        />
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email (for swaps)"
-          className="add-agent-input add-agent-input--email"
         />
         <div className="add-agent-actions">
           <button
