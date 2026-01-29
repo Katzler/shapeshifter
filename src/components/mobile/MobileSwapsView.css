@@ -1,0 +1,53 @@
+.mobile-swaps-view {
+  padding: 0.5rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.mobile-swaps-view .swaps-grid {
+  padding: 0;
+}
+
+.mobile-swaps-view .swaps-grid__header {
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.mobile-swaps-view .swaps-grid__header h2 {
+  font-size: 1.25rem;
+}
+
+.mobile-swaps-view .btn-post-swap {
+  width: 100%;
+}
+
+.mobile-swaps-view .swaps-grid__tabs {
+  overflow-x: auto;
+  flex-wrap: nowrap;
+}
+
+.mobile-swaps-view .swaps-tab {
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
+
+.mobile-swaps-view .swap-card {
+  padding: 0.75rem;
+}
+
+.mobile-swaps-view .swap-card__header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.mobile-swaps-view .swap-card__actions {
+  flex-wrap: wrap;
+}
+
+.mobile-swaps-view .swap-offer {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}

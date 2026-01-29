@@ -1,6 +1,6 @@
 import './BottomTabBar.css';
 
-export type MobileTab = 'schedule' | 'availability' | 'coverage';
+export type MobileTab = 'schedule' | 'availability' | 'coverage' | 'swaps';
 
 interface TabConfig {
   id: MobileTab;
@@ -12,6 +12,7 @@ const TABS: TabConfig[] = [
   { id: 'schedule', label: 'Schedule', icon: '📅' },
   { id: 'availability', label: 'Availability', icon: '✋' },
   { id: 'coverage', label: 'Coverage', icon: '📊' },
+  { id: 'swaps', label: 'Swaps', icon: '🔄' },
 ];
 
 interface BottomTabBarProps {

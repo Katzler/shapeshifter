@@ -5,6 +5,7 @@ import { DayPickerStrip } from './DayPickerStrip';
 import { MobileEditorView } from './MobileEditorView';
 import { MobileScheduleView } from './MobileScheduleView';
 import { MobileCoverageView } from './MobileCoverageView';
+import { MobileSwapsView } from './MobileSwapsView';
 import { MobileWorkspacePicker, MobileWorkspaceTrigger } from './MobileWorkspacePicker';
 import { useApp } from '../../store';
 import type { DayOfWeek } from '../../types';
@@ -84,10 +85,10 @@ export function MobileShell() {
     setSelectedAgentId(agentId);
   }, []);
 
-  // Day picker is shown for Schedule and Availability tabs, not Coverage
-  const showDayPicker = activeTab !== 'coverage';
+  // Day picker is shown for Schedule and Availability tabs
+  const showDayPicker = activeTab === 'schedule' || activeTab === 'availability';
   // Banner is shown on Schedule and Availability tabs
-  const showCoverageBanner = activeTab !== 'coverage';
+  const showCoverageBanner = activeTab === 'schedule' || activeTab === 'availability';
 
   const handleBannerTap = useCallback(() => {
     setActiveTab('coverage');
@@ -107,6 +108,8 @@ export function MobileShell() {
         return <MobileScheduleView selectedDay={selectedDay} />;
       case 'coverage':
         return <MobileCoverageView />;
+      case 'swaps':
+        return <MobileSwapsView />;
     }
   };
 

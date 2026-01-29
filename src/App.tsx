@@ -7,6 +7,7 @@ import { AgentList, AddAgent } from './components/agents'
 import { PreferenceGrid } from './components/grid'
 import { CoverageGrid } from './components/coverage'
 import { ScheduleGrid } from './components/schedule'
+import { SwapsGrid } from './components/swaps'
 import { ViewTabs, type ViewType, DataActions, SaveErrorBanner } from './components/common'
 import { MobileShell } from './components/mobile'
 import { WorkspaceSelector, CreateWorkspace, InviteModal, PendingInvites, TeamManagement, ImportLocalData, hasLocalData } from './components/workspace'
@@ -32,6 +33,8 @@ function DesktopContent() {
         return <CoverageGrid />
       case 'schedule':
         return <ScheduleGrid />
+      case 'swaps':
+        return <SwapsGrid />
     }
   }
 

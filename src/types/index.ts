@@ -350,3 +350,59 @@ export function normalizeAppData(input: unknown): AppData {
 
   return result;
 }
+
+// ==================== Swap Types ====================
+
+export type SwapType = 'trade' | 'giveaway';
+export type SwapStatus = 'pending' | 'awaiting_approval' | 'approved' | 'denied' | 'cancelled';
+
+export interface SwapRequest {
+  id: string;
+  workspaceId: string;
+  day: DayOfWeek;
+  shiftId: ShiftId;
+  fromAgentId: string;
+  fromAgentEmail: string;
+  type: SwapType;
+  status: SwapStatus;
+  note?: string;
+  toAgentId?: string;
+  toAgentEmail?: string;
+  toDay?: DayOfWeek;
+  toShiftId?: ShiftId;
+  createdAt: string;
+  claimedAt?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  denialReason?: string;
+}
+
+export interface SwapOffer {
+  id: string;
+  swapRequestId: string;
+  fromAgentId: string;
+  fromAgentEmail: string;
+  day: DayOfWeek;
+  shiftId: ShiftId;
+  note?: string;
+  createdAt: string;
+}
+
+// Helper to get shift label with time range
+export function getShiftDisplayLabel(shiftId: ShiftId): string {
+  const shift = SHIFTS.find(s => s.id === shiftId);
+  if (!shift) return shiftId.toUpperCase();
+  return `${shift.label} (${shift.startTime}–${shift.endTime})`;
+}
+
+// Helper to get day label
+export function getDayDisplayLabel(day: DayOfWeek): string {
+  const dayObj = DAYS.find(d => d.id === day);
+  return dayObj?.label ?? day;
+}
+
+// Helper to format shift for display: "Mon S1 (00:00–07:00)"
+export function formatShiftDisplay(day: DayOfWeek, shiftId: ShiftId): string {
+  const dayLabel = getDayDisplayLabel(day).slice(0, 3); // "Mon", "Tue", etc.
+  return `${dayLabel} ${getShiftDisplayLabel(shiftId)}`;
+}

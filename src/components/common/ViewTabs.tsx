@@ -1,6 +1,6 @@
 import './ViewTabs.css';
 
-export type ViewType = 'editor' | 'coverage' | 'schedule';
+export type ViewType = 'editor' | 'coverage' | 'schedule' | 'swaps';
 
 interface ViewTabsProps {
   activeView: ViewType;
@@ -21,6 +21,12 @@ export function ViewTabs({ activeView, onViewChange }: ViewTabsProps) {
         onClick={() => onViewChange('coverage')}
       >
         Coverage
+      </button>
+      <button
+        className={`view-tab ${activeView === 'swaps' ? 'active' : ''}`}
+        onClick={() => onViewChange('swaps')}
+      >
+        Swaps
       </button>
     </div>
   );
