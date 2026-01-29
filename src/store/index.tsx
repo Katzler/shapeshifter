@@ -68,6 +68,7 @@ interface AppContextValue {
   renameWorkspace: (workspaceId: string, name: string) => void;
   deleteWorkspace: (workspaceId: string) => void;
   importAsNewWorkspace: (data: AppData, name: string) => WorkspaceMeta | null;
+  refreshWorkspaceData?: () => Promise<void>;
 }
 
 // Export the context so SupabaseAppProvider can also use it

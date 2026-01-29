@@ -300,6 +300,14 @@ export function SupabaseAppProvider({ children, initialWorkspaceId }: SupabaseAp
     throw new Error('importAsNewWorkspace not available in Supabase mode');
   }, []);
 
+  // Refresh workspace data from Supabase (used after invite acceptance)
+  const refreshWorkspaceData = useCallback(async (): Promise<void> => {
+    const workspaceData = await supabaseWorkspaceService.loadWorkspace(workspaceId);
+    if (workspaceData) {
+      setData(workspaceData);
+    }
+  }, [workspaceId]);
+
   // Show loading state while data loads
   if (loading) {
     return (
@@ -342,6 +350,7 @@ export function SupabaseAppProvider({ children, initialWorkspaceId }: SupabaseAp
     renameWorkspace,
     deleteWorkspace,
     importAsNewWorkspace,
+    refreshWorkspaceData,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
