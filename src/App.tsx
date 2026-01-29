@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import './App.css'
 import { AuthProvider, useAuth } from './store/AuthContext'
 import { useApp } from './store'
@@ -18,8 +18,22 @@ function DesktopContent() {
   const [activeView, setActiveView] = useState<ViewType>('schedule')
   const [showInviteModal, setShowInviteModal] = useState(false)
   const [showTeamManagement, setShowTeamManagement] = useState(false)
-  const { currentWorkspace, userRole } = useApp()
+  const { currentWorkspace, userRole, selectAgent, agents } = useApp()
   const { user, refreshMemberships, signOut } = useAuth()
+
+  // Check if user just accepted an invite - auto-select their agent and show editor
+  useEffect(() => {
+    const newAgentId = sessionStorage.getItem('shapeshifter_new_agent_id')
+    if (newAgentId) {
+      sessionStorage.removeItem('shapeshifter_new_agent_id')
+      // Verify the agent exists in the current workspace
+      const agentExists = agents.some(a => a.id === newAgentId)
+      if (agentExists) {
+        selectAgent(newAgentId)
+        setActiveView('editor')
+      }
+    }
+  }, [agents, selectAgent])
 
   const handleAgentSelect = useCallback(() => {
     setActiveView('editor')

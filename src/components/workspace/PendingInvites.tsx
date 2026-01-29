@@ -48,6 +48,11 @@ export function PendingInvites({ invites, onInviteHandled }: PendingInvitesProps
         throw new Error('Failed to join workspace');
       }
 
+      // Store agent ID so the app can auto-select it and show the editor
+      if (result.agentId) {
+        sessionStorage.setItem('shapeshifter_new_agent_id', result.agentId);
+      }
+
       setAcceptingInvite(null);
       onInviteHandled();
     } catch (err) {
