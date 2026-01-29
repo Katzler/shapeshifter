@@ -509,21 +509,13 @@ export const supabaseWorkspaceService = {
       }
       console.log('[acceptInviteWithAgent] Loaded workspace, agents:', workspaceData.agents.length);
 
-      // 2. Create new agent
+      // 2. Create new agent (in memory)
       const agentId = generateId();
       const newAgent = createAgent(agentId, agentName);
       workspaceData.agents.push(newAgent);
       console.log('[acceptInviteWithAgent] Created agent:', agentId, agentName);
 
-      // 3. Save updated workspace data
-      const saved = await this.saveWorkspace(workspaceId, workspaceData);
-      if (!saved) {
-        console.error('[acceptInviteWithAgent] Failed to save workspace with new agent');
-        return { success: false };
-      }
-      console.log('[acceptInviteWithAgent] Saved workspace, agents now:', workspaceData.agents.length);
-
-      // 4. Add workspace member with linked_agent_id
+      // 3. Add workspace member FIRST (so RLS allows the workspace save)
       const { error: memberError } = await supabase
         .from('workspace_members')
         .insert({
@@ -534,16 +526,31 @@ export const supabaseWorkspaceService = {
         });
 
       if (memberError) {
-        console.error('Failed to add workspace member:', memberError);
+        console.error('[acceptInviteWithAgent] Failed to add workspace member:', memberError);
         return { success: false };
       }
+      console.log('[acceptInviteWithAgent] Added member, now saving workspace data');
 
-      // 5. Delete the invite (non-fatal)
+      // 4. NOW save workspace data (user is a member, RLS allows it)
+      const saved = await this.saveWorkspace(workspaceId, workspaceData);
+      if (!saved) {
+        console.error('[acceptInviteWithAgent] Failed to save workspace with new agent');
+        // Rollback: remove the member we just added
+        await supabase
+          .from('workspace_members')
+          .delete()
+          .eq('workspace_id', workspaceId)
+          .eq('user_email', userEmail.toLowerCase());
+        return { success: false };
+      }
+      console.log('[acceptInviteWithAgent] Saved workspace, agents now:', workspaceData.agents.length);
+
+      // 5. Delete the invite
       await this.deleteInvite(inviteId);
 
       return { success: true, agentId };
     } catch (err) {
-      console.error('Failed to accept invite with agent:', err);
+      console.error('[acceptInviteWithAgent] Failed to accept invite with agent:', err);
       return { success: false };
     }
   },
