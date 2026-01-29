@@ -127,3 +127,102 @@
     justify-content: flex-end;
   }
 }
+
+/* Name Input Modal */
+.name-input-modal {
+  background: var(--color-bg-solid);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.name-input-modal h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  color: var(--color-text-primary);
+}
+
+.name-input-modal .modal-subtitle {
+  color: var(--color-text-secondary);
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem;
+}
+
+.name-input-section {
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+.name-input-section label {
+  display: block;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.name-input-section input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 1rem;
+  background: var(--color-bg-solid);
+  color: var(--color-text-primary);
+}
+
+.name-input-section input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-subtle, rgba(139, 92, 246, 0.1));
+}
+
+.name-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.name-input-modal .modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.name-input-modal .btn-secondary {
+  padding: 0.625rem 1.25rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.name-input-modal .btn-secondary:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+}
+
+.name-input-modal .btn-primary {
+  padding: 0.625rem 1.25rem;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.name-input-modal .btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.name-input-modal .btn-primary:disabled,
+.name-input-modal .btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

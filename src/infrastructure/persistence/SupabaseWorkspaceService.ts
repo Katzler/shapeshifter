@@ -1,6 +1,7 @@
 import { supabase } from '../../lib/supabase';
 import type { AppData, WorkspaceMeta } from '../../types';
-import { createEmptyAppData, normalizeAppData } from '../../types';
+import { createEmptyAppData, normalizeAppData, createAgent } from '../../types';
+import { generateId } from '../../utils';
 
 // Helper to safely extract workspace fields from Supabase join response
 interface WorkspaceJoinResult {
@@ -485,5 +486,61 @@ export const supabaseWorkspaceService = {
         invitedAt: row.invited_at,
       };
     });
+  },
+
+  /**
+   * Accept invite and create linked agent in one operation.
+   * Creates the agent, adds member with linked_agent_id, and deletes invite.
+   */
+  async acceptInviteWithAgent(
+    workspaceId: string,
+    userEmail: string,
+    role: 'admin' | 'agent',
+    agentName: string,
+    inviteId: string
+  ): Promise<{ success: boolean; agentId?: string }> {
+    try {
+      // 1. Load current workspace data
+      const workspaceData = await this.loadWorkspace(workspaceId);
+      if (!workspaceData) {
+        console.error('Failed to load workspace data');
+        return { success: false };
+      }
+
+      // 2. Create new agent
+      const agentId = generateId();
+      const newAgent = createAgent(agentId, agentName);
+      workspaceData.agents.push(newAgent);
+
+      // 3. Save updated workspace data
+      const saved = await this.saveWorkspace(workspaceId, workspaceData);
+      if (!saved) {
+        console.error('Failed to save workspace with new agent');
+        return { success: false };
+      }
+
+      // 4. Add workspace member with linked_agent_id
+      const { error: memberError } = await supabase
+        .from('workspace_members')
+        .insert({
+          workspace_id: workspaceId,
+          user_email: userEmail.toLowerCase(),
+          role,
+          linked_agent_id: agentId,
+        });
+
+      if (memberError) {
+        console.error('Failed to add workspace member:', memberError);
+        return { success: false };
+      }
+
+      // 5. Delete the invite (non-fatal)
+      await this.deleteInvite(inviteId);
+
+      return { success: true, agentId };
+    } catch (err) {
+      console.error('Failed to accept invite with agent:', err);
+      return { success: false };
+    }
   },
 };

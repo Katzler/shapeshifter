@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { supabaseWorkspaceService } from '../../infrastructure/persistence/SupabaseWorkspaceService';
 import { useAuth, type PendingInvite } from '../../store/AuthContext';
 import './PendingInvites.css';
@@ -12,35 +12,56 @@ export function PendingInvites({ invites, onInviteHandled }: PendingInvitesProps
   const { user } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [acceptingInvite, setAcceptingInvite] = useState<PendingInvite | null>(null);
+  const [name, setName] = useState('');
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
-  const handleAccept = async (invite: PendingInvite) => {
-    if (!user?.email) return;
+  // Focus name input when modal opens
+  useEffect(() => {
+    if (acceptingInvite && nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
+  }, [acceptingInvite]);
 
-    setLoading(invite.id);
+  const handleAcceptClick = (invite: PendingInvite) => {
+    setAcceptingInvite(invite);
+    setName('');
+    setError(null);
+  };
+
+  const handleAcceptWithName = async () => {
+    if (!user?.email || !acceptingInvite || !name.trim()) return;
+
+    setLoading(acceptingInvite.id);
     setError(null);
 
     try {
-      // Add user to workspace members
-      const memberAdded = await supabaseWorkspaceService.addWorkspaceMember(
-        invite.workspaceId,
+      const result = await supabaseWorkspaceService.acceptInviteWithAgent(
+        acceptingInvite.workspaceId,
         user.email,
-        invite.role
+        acceptingInvite.role,
+        name.trim(),
+        acceptingInvite.id
       );
 
-      if (!memberAdded) {
-        throw new Error('Failed to add member');
+      if (!result.success) {
+        throw new Error('Failed to join workspace');
       }
 
-      // Delete the invite (non-fatal if fails)
-      await supabaseWorkspaceService.deleteInvite(invite.id);
-
+      setAcceptingInvite(null);
       onInviteHandled();
     } catch (err) {
       console.error('Failed to accept invite:', err);
-      setError('Failed to accept invite. Please try again.');
+      setError('Failed to join workspace. Please try again.');
     } finally {
       setLoading(null);
     }
+  };
+
+  const handleCancelAccept = () => {
+    setAcceptingInvite(null);
+    setName('');
+    setError(null);
   };
 
   const handleDecline = async (invite: PendingInvite) => {
@@ -70,6 +91,14 @@ export function PendingInvites({ invites, onInviteHandled }: PendingInvitesProps
       day: 'numeric',
       year: 'numeric'
     });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && name.trim()) {
+      handleAcceptWithName();
+    } else if (e.key === 'Escape') {
+      handleCancelAccept();
+    }
   };
 
   return (
@@ -102,7 +131,7 @@ export function PendingInvites({ invites, onInviteHandled }: PendingInvitesProps
                 </button>
                 <button
                   className="btn-accept"
-                  onClick={() => handleAccept(invite)}
+                  onClick={() => handleAcceptClick(invite)}
                   disabled={loading === invite.id}
                 >
                   {loading === invite.id ? 'Joining...' : 'Accept'}
@@ -112,6 +141,50 @@ export function PendingInvites({ invites, onInviteHandled }: PendingInvitesProps
           ))}
         </div>
       </div>
+
+      {/* Name Input Modal */}
+      {acceptingInvite && (
+        <div className="modal-overlay" onClick={handleCancelAccept}>
+          <div className="name-input-modal" onClick={e => e.stopPropagation()}>
+            <h2>Welcome to ShapeShifter</h2>
+            <p className="modal-subtitle">
+              You've been invited to join <strong>{acceptingInvite.workspaceName}</strong>
+            </p>
+
+            <div className="name-input-section">
+              <label htmlFor="agent-name">Enter your name to continue:</label>
+              <input
+                ref={nameInputRef}
+                id="agent-name"
+                type="text"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Your name"
+                disabled={loading === acceptingInvite.id}
+              />
+              <p className="name-hint">This will be your name on the schedule.</p>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="btn-secondary"
+                onClick={handleCancelAccept}
+                disabled={loading === acceptingInvite.id}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-primary"
+                onClick={handleAcceptWithName}
+                disabled={!name.trim() || loading === acceptingInvite.id}
+              >
+                {loading === acceptingInvite.id ? 'Joining...' : 'Join Team'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
