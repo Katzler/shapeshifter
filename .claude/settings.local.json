@@ -21,7 +21,24 @@
       "Bash(git fetch:*)",
       "WebSearch",
       "Bash(npx tsc:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebFetch(domain:www.deputy.com)",
+      "WebFetch(domain:www.callcentrehelper.com)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "WebFetch(domain:linear.app)",
+      "WebFetch(domain:www.raycast.com)",
+      "Bash(xmllint:*)",
+      "Bash(ls:*)",
+      "Bash(git merge:*)",
+      "WebFetch(domain:www.amanarhotel.com)",
+      "WebFetch(domain:www.wappalyzer.com)",
+      "WebFetch(domain:whatcms.org)",
+      "Bash(Summary\" size.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(npm run test:run:*)",
+      "Bash(grep:*)",
+      "Bash(npm test:*)"
     ]
   }
 }

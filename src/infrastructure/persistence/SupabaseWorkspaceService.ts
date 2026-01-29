@@ -501,23 +501,27 @@ export const supabaseWorkspaceService = {
   ): Promise<{ success: boolean; agentId?: string }> {
     try {
       // 1. Load current workspace data
+      console.log('[acceptInviteWithAgent] Loading workspace:', workspaceId);
       const workspaceData = await this.loadWorkspace(workspaceId);
       if (!workspaceData) {
-        console.error('Failed to load workspace data');
+        console.error('[acceptInviteWithAgent] Failed to load workspace data');
         return { success: false };
       }
+      console.log('[acceptInviteWithAgent] Loaded workspace, agents:', workspaceData.agents.length);
 
       // 2. Create new agent
       const agentId = generateId();
       const newAgent = createAgent(agentId, agentName);
       workspaceData.agents.push(newAgent);
+      console.log('[acceptInviteWithAgent] Created agent:', agentId, agentName);
 
       // 3. Save updated workspace data
       const saved = await this.saveWorkspace(workspaceId, workspaceData);
       if (!saved) {
-        console.error('Failed to save workspace with new agent');
+        console.error('[acceptInviteWithAgent] Failed to save workspace with new agent');
         return { success: false };
       }
+      console.log('[acceptInviteWithAgent] Saved workspace, agents now:', workspaceData.agents.length);
 
       // 4. Add workspace member with linked_agent_id
       const { error: memberError } = await supabase

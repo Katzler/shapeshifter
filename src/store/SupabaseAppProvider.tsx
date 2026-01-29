@@ -57,6 +57,7 @@ export function SupabaseAppProvider({ children, initialWorkspaceId }: SupabaseAp
       isInitialMount.current = true;
 
       try {
+        console.log('[SupabaseAppProvider] Loading workspace:', workspaceId);
         const [workspaceData, meta, role] = await Promise.all([
           supabaseWorkspaceService.loadWorkspace(workspaceId),
           supabaseWorkspaceService.getWorkspaceMeta(workspaceId),
@@ -65,6 +66,7 @@ export function SupabaseAppProvider({ children, initialWorkspaceId }: SupabaseAp
 
         if (cancelled) return;
 
+        console.log('[SupabaseAppProvider] Loaded data, agents:', workspaceData?.agents?.length ?? 0);
         setData(workspaceData ?? createEmptyAppData());
         setCurrentWorkspace(meta);
         setUserRole(role);
