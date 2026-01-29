@@ -43,7 +43,7 @@ interface AppContextValue {
   userRole: 'admin' | 'agent' | null;
 
   // Existing actions
-  addAgent: (name: string) => Agent;
+  addAgent: (name: string, email?: string) => Agent;
   renameAgent: (id: string, name: string) => void;
   deleteAgent: (id: string) => void;
   setContractHours: (agentId: string, hours: number) => void;
@@ -145,9 +145,9 @@ export function AppProvider({ children }: AppProviderProps) {
 
   // ==================== Agent Actions ====================
 
-  const addAgent = useCallback((name: string): Agent => {
+  const addAgent = useCallback((name: string, email?: string): Agent => {
     const id = generateId();
-    const agent = createAgent(id, name);
+    const agent = createAgent(id, name, email);
     setData((prev) => ({
       ...prev,
       agents: [...prev.agents, agent],

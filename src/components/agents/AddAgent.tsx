@@ -1,6 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useApp } from '../../store';
-import { useEditableField } from '../../hooks';
 import './AddAgent.css';
 
 interface AddAgentProps {
@@ -10,44 +9,82 @@ interface AddAgentProps {
 export function AddAgent({ onAgentAdd }: AddAgentProps) {
   const { addAgent, selectAgent } = useApp();
   const [isAdding, setIsAdding] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
-  const nameField = useEditableField({
-    initialValue: '',
-    onSubmit: (name) => {
-      const trimmed = name.trim();
-      if (trimmed) {
-        const agent = addAgent(trimmed);
-        selectAgent(agent.id);
-        onAgentAdd?.();
-      }
-      setIsAdding(false);
-    },
-    validate: (name) => name.trim().length > 0,
-  });
+  useEffect(() => {
+    if (isAdding && nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
+  }, [isAdding]);
 
   const handleStartAdding = useCallback(() => {
     setIsAdding(true);
-    nameField.startEditing();
-  }, [nameField]);
+    setName('');
+    setEmail('');
+  }, []);
 
   const handleCancel = useCallback(() => {
-    nameField.cancel();
     setIsAdding(false);
-  }, [nameField]);
+    setName('');
+    setEmail('');
+  }, []);
+
+  const handleSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedName = name.trim();
+    if (trimmedName) {
+      const agent = addAgent(trimmedName, email.trim() || undefined);
+      selectAgent(agent.id);
+      onAgentAdd?.();
+    }
+    setIsAdding(false);
+    setName('');
+    setEmail('');
+  }, [name, email, addAgent, selectAgent, onAgentAdd]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      handleCancel();
+    }
+  }, [handleCancel]);
 
   if (isAdding) {
     return (
-      <div className="add-agent-input">
+      <form className="add-agent-form" onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
         <input
-          ref={nameField.inputRef}
+          ref={nameInputRef}
           type="text"
-          value={nameField.value}
-          onChange={(e) => nameField.setValue(e.target.value)}
-          onKeyDown={nameField.handleKeyDown}
-          onBlur={handleCancel}
-          placeholder="Agent name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Agent name *"
+          className="add-agent-input"
         />
-      </div>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email (for swaps)"
+          className="add-agent-input add-agent-input--email"
+        />
+        <div className="add-agent-actions">
+          <button
+            type="submit"
+            className="add-agent-submit"
+            disabled={!name.trim()}
+          >
+            Add
+          </button>
+          <button
+            type="button"
+            className="add-agent-cancel"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
     );
   }
 

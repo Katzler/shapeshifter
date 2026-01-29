@@ -90,6 +90,7 @@ export const DEFAULT_CONTRACT_HOURS = 40;
 export interface Agent {
   id: string;
   name: string;
+  email?: string; // Optional: links agent to user account for swaps
   preferences: WeekPreferences;
   contractHoursPerWeek: number;
 }
@@ -153,10 +154,11 @@ export function createEmptyWeekSchedule(): WeekSchedule {
 }
 
 // Create a new agent with default preferences
-export function createAgent(id: string, name: string): Agent {
+export function createAgent(id: string, name: string, email?: string): Agent {
   return {
     id,
     name,
+    email: email?.trim().toLowerCase() || undefined,
     preferences: createDefaultWeekPreferences(),
     contractHoursPerWeek: DEFAULT_CONTRACT_HOURS,
   };
@@ -272,9 +274,15 @@ function normalizeAgent(input: unknown): Agent | null {
     contractHours = Math.round(obj.contractHoursPerWeek);
   }
 
+  // email is optional
+  const email = typeof obj.email === 'string' && obj.email.trim() !== ''
+    ? obj.email.trim().toLowerCase()
+    : undefined;
+
   return {
     id: obj.id,
     name: obj.name,
+    email,
     preferences: normalizeWeekPreferences(obj.preferences),
     contractHoursPerWeek: contractHours,
   };

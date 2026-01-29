@@ -50,7 +50,7 @@ describe('App Integration', () => {
     await user.click(screen.getByText('+ Add Agent'));
 
     // Type agent name and submit
-    const input = screen.getByPlaceholderText('Agent name');
+    const input = screen.getByPlaceholderText('Agent name *');
     await user.type(input, 'Alice{enter}');
 
     // Agent should appear in the sidebar list

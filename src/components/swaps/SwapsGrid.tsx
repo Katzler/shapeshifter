@@ -57,9 +57,10 @@ export function SwapsGrid() {
     return agents.find(a => a.id === agentId)?.name ?? 'Unknown';
   };
 
-  // Get current user's agent ID
+  // Get current user's agent ID by matching email
   const getCurrentUserAgentId = () => {
-    return agents.find(a => a.name.toLowerCase().includes(currentUserEmail?.split('@')[0] ?? ''))?.id;
+    if (!currentUserEmail) return undefined;
+    return agents.find(a => a.email?.toLowerCase() === currentUserEmail)?.id;
   };
 
   // Get shifts assigned to current user

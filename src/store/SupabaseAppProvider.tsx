@@ -125,9 +125,9 @@ export function SupabaseAppProvider({ children, initialWorkspaceId }: SupabaseAp
 
   // ==================== Agent Actions ====================
 
-  const addAgent = useCallback((name: string): Agent => {
+  const addAgent = useCallback((name: string, email?: string): Agent => {
     const id = generateId();
-    const agent = createAgent(id, name);
+    const agent = createAgent(id, name, email);
     setData((prev) => ({
       ...prev,
       agents: [...prev.agents, agent],
