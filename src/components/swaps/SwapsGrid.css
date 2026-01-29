@@ -26,8 +26,13 @@
   font-weight: 500;
 }
 
-.btn-post-swap:hover {
+.btn-post-swap:hover:not(:disabled) {
   opacity: 0.9;
+}
+
+.btn-post-swap:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .swaps-grid__error {
@@ -36,6 +41,15 @@
   color: var(--color-unavailable);
   border-radius: 6px;
   margin-bottom: 1rem;
+}
+
+.swaps-grid__warning {
+  padding: 0.75rem 1rem;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text, #92400e);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
 }
 
 .swaps-grid__tabs {
@@ -76,6 +90,16 @@
   text-align: center;
   padding: 3rem;
   color: var(--text-secondary);
+}
+
+.swaps-grid__empty p {
+  margin: 0;
+}
+
+.swaps-grid__empty-hint {
+  font-size: 0.85rem;
+  margin-top: 0.5rem !important;
+  color: var(--text-muted);
 }
 
 .swaps-grid__loading {
@@ -218,9 +242,15 @@
   font-size: 0.9rem;
 }
 
-.btn-offer:hover,
-.btn-claim:hover {
+.btn-offer:hover:not(:disabled),
+.btn-claim:hover:not(:disabled) {
   opacity: 0.9;
+}
+
+.btn-offer:disabled,
+.btn-claim:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-cancel {

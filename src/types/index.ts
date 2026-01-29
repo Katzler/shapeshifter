@@ -361,39 +361,28 @@ export function normalizeAppData(input: unknown): AppData {
 
 // ==================== Swap Types ====================
 
-export type SwapType = 'trade' | 'giveaway';
-export type SwapStatus = 'pending' | 'awaiting_approval' | 'approved' | 'denied' | 'cancelled';
+export type SwapStatus = 'available' | 'claimed' | 'approved' | 'denied' | 'cancelled';
 
 export interface SwapRequest {
   id: string;
   workspaceId: string;
   day: DayOfWeek;
   shiftId: ShiftId;
-  fromAgentId: string;
-  fromAgentEmail: string;
-  type: SwapType;
-  status: SwapStatus;
-  note?: string;
-  toAgentId?: string;
-  toAgentEmail?: string;
-  toDay?: DayOfWeek;
-  toShiftId?: ShiftId;
-  createdAt: string;
+  fromAgent: string;        // agent name (for display)
+  note?: string;            // from original poster
+
+  // If claimed
+  claimedBy?: string;       // agent name (for display)
+  claimNote?: string;
   claimedAt?: string;
+
+  status: SwapStatus;
+  createdAt: string;
+
+  // If approved/denied
   reviewedBy?: string;
   reviewedAt?: string;
   denialReason?: string;
-}
-
-export interface SwapOffer {
-  id: string;
-  swapRequestId: string;
-  fromAgentId: string;
-  fromAgentEmail: string;
-  day: DayOfWeek;
-  shiftId: ShiftId;
-  note?: string;
-  createdAt: string;
 }
 
 // Helper to get shift label with time range

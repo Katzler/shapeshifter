@@ -3,28 +3,36 @@ import { useApp } from '../../store';
 import { useAuth } from '../../store/AuthContext';
 import { swapService } from '../../infrastructure/persistence/SwapService';
 import { generateId } from '../../utils';
-import type { SwapRequest, SwapOffer, DayOfWeek, ShiftId } from '../../types';
+import type { SwapRequest, DayOfWeek, ShiftId } from '../../types';
 import { formatShiftDisplay, DAYS, SHIFTS } from '../../types';
 import './SwapsGrid.css';
 
-type SwapTab = 'pending' | 'awaiting' | 'completed';
+type SwapTab = 'available' | 'awaiting' | 'history';
 
 export function SwapsGrid() {
   const { agents, schedule, currentWorkspace, userRole, setScheduleAssignment } = useApp();
   const { user } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<SwapTab>('pending');
+  const [activeTab, setActiveTab] = useState<SwapTab>('available');
   const [swapRequests, setSwapRequests] = useState<SwapRequest[]>([]);
-  const [swapOffers, setSwapOffers] = useState<Record<string, SwapOffer[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [linkedAgentId, setLinkedAgentId] = useState<string | null>(null);
 
   // Modal states
   const [showPostModal, setShowPostModal] = useState(false);
-  const [showOfferModal, setShowOfferModal] = useState<SwapRequest | null>(null);
   const [postingSwap, setPostingSwap] = useState(false);
 
   const currentUserEmail = user?.email?.toLowerCase();
+  const isAdmin = userRole === 'admin';
+
+  // Load linked agent for current user
+  useEffect(() => {
+    if (!currentWorkspace?.id || !currentUserEmail) return;
+
+    swapService.getLinkedAgentId(currentWorkspace.id, currentUserEmail)
+      .then(setLinkedAgentId);
+  }, [currentWorkspace?.id, currentUserEmail]);
 
   // Load swap data
   const loadSwaps = useCallback(async () => {
@@ -36,10 +44,6 @@ export function SwapsGrid() {
     try {
       const requests = await swapService.getSwapRequests(currentWorkspace.id);
       setSwapRequests(requests);
-
-      const requestIds = requests.map(r => r.id);
-      const offers = await swapService.getSwapOffers(requestIds);
-      setSwapOffers(offers);
     } catch (err) {
       console.error('Failed to load swaps:', err);
       setError('Failed to load swap requests');
@@ -53,25 +57,25 @@ export function SwapsGrid() {
   }, [loadSwaps]);
 
   // Get agent name by ID
-  const getAgentName = (agentId: string) => {
-    return agents.find(a => a.id === agentId)?.name ?? 'Unknown';
+  const getAgentName = (agentId: string | undefined) => {
+    if (!agentId) return 'Unknown';
+    return agents.find(a => a.id === agentId)?.name ?? agentId;
   };
 
-  // Get current user's agent ID by matching email
-  const getCurrentUserAgentId = () => {
-    if (!currentUserEmail) return undefined;
-    return agents.find(a => a.email?.toLowerCase() === currentUserEmail)?.id;
+  // Get linked agent's name
+  const getLinkedAgentName = () => {
+    if (!linkedAgentId) return null;
+    return agents.find(a => a.id === linkedAgentId)?.name ?? null;
   };
 
-  // Get shifts assigned to current user
+  // Get shifts assigned to current user's linked agent
   const getUserAssignedShifts = (): { day: DayOfWeek; shiftId: ShiftId }[] => {
-    const userAgentId = getCurrentUserAgentId();
-    if (!userAgentId) return [];
+    if (!linkedAgentId) return [];
 
     const assigned: { day: DayOfWeek; shiftId: ShiftId }[] = [];
     for (const day of DAYS) {
       for (const shift of SHIFTS) {
-        if (schedule[day.id][shift.id] === userAgentId) {
+        if (schedule[day.id][shift.id] === linkedAgentId) {
           assigned.push({ day: day.id, shiftId: shift.id });
         }
       }
@@ -80,21 +84,20 @@ export function SwapsGrid() {
   };
 
   // Filter requests by tab
-  const pendingRequests = swapRequests.filter(r => r.status === 'pending');
-  const awaitingRequests = swapRequests.filter(r => r.status === 'awaiting_approval');
-  const completedRequests = swapRequests.filter(r =>
+  const availableRequests = swapRequests.filter(r => r.status === 'available');
+  const awaitingRequests = swapRequests.filter(r => r.status === 'claimed');
+  const historyRequests = swapRequests.filter(r =>
     r.status === 'approved' || r.status === 'denied' || r.status === 'cancelled'
-  ).slice(0, 10); // Last 10
+  ).slice(0, 10);
 
-  // Post a new swap request
+  // Post a new swap request (make shift available)
   const handlePostSwap = async (
     day: DayOfWeek,
     shiftId: ShiftId,
-    type: 'trade' | 'giveaway',
     note?: string
   ) => {
-    const userAgentId = getCurrentUserAgentId();
-    if (!userAgentId || !currentUserEmail || !currentWorkspace?.id) return;
+    const agentName = getLinkedAgentName();
+    if (!agentName || !currentWorkspace?.id) return;
 
     setPostingSwap(true);
     const success = await swapService.createSwapRequest(
@@ -102,9 +105,7 @@ export function SwapsGrid() {
       currentWorkspace.id,
       day,
       shiftId,
-      userAgentId,
-      currentUserEmail,
-      type,
+      agentName,
       note
     );
 
@@ -117,43 +118,18 @@ export function SwapsGrid() {
     setPostingSwap(false);
   };
 
-  // Offer a trade
-  const handleOfferTrade = async (
-    swapRequest: SwapRequest,
-    day: DayOfWeek,
-    shiftId: ShiftId,
-    note?: string
-  ) => {
-    const userAgentId = getCurrentUserAgentId();
-    if (!userAgentId || !currentUserEmail) return;
-
-    const success = await swapService.createSwapOffer(
-      generateId(),
-      swapRequest.id,
-      userAgentId,
-      currentUserEmail,
-      day,
-      shiftId,
-      note
-    );
-
-    if (success) {
-      setShowOfferModal(null);
-      await loadSwaps();
-    } else {
-      setError('Failed to submit offer');
+  // Claim an available shift
+  const handleClaimShift = async (swapRequest: SwapRequest, claimNote?: string) => {
+    const agentName = getLinkedAgentName();
+    if (!agentName) {
+      setError('You must be linked to a schedule agent to claim shifts');
+      return;
     }
-  };
 
-  // Claim a giveaway
-  const handleClaimGiveaway = async (swapRequest: SwapRequest) => {
-    const userAgentId = getCurrentUserAgentId();
-    if (!userAgentId || !currentUserEmail) return;
-
-    const success = await swapService.claimGiveaway(
+    const success = await swapService.claimShift(
       swapRequest.id,
-      userAgentId,
-      currentUserEmail
+      agentName,
+      claimNote
     );
 
     if (success) {
@@ -163,30 +139,16 @@ export function SwapsGrid() {
     }
   };
 
-  // Accept a trade offer
-  const handleAcceptOffer = async (swapRequest: SwapRequest, offer: SwapOffer) => {
-    const success = await swapService.acceptOffer(swapRequest.id, offer);
-    if (success) {
-      await loadSwaps();
-    } else {
-      setError('Failed to accept offer');
-    }
-  };
-
   // Admin approve swap
   const handleApprove = async (swapRequest: SwapRequest) => {
     if (!currentUserEmail) return;
 
     const success = await swapService.approveSwap(swapRequest.id, currentUserEmail);
     if (success) {
-      // Update the schedule
-      if (swapRequest.type === 'trade' && swapRequest.toDay && swapRequest.toShiftId) {
-        // Swap both shifts
-        setScheduleAssignment(swapRequest.day, swapRequest.shiftId, swapRequest.toAgentId ?? null);
-        setScheduleAssignment(swapRequest.toDay, swapRequest.toShiftId, swapRequest.fromAgentId);
-      } else if (swapRequest.type === 'giveaway' && swapRequest.toAgentId) {
-        // Just reassign the single shift
-        setScheduleAssignment(swapRequest.day, swapRequest.shiftId, swapRequest.toAgentId);
+      // Update the schedule: reassign shift from original agent to claimer
+      const claimerAgent = agents.find(a => a.name === swapRequest.claimedBy);
+      if (claimerAgent) {
+        setScheduleAssignment(swapRequest.day, swapRequest.shiftId, claimerAgent.id);
       }
       await loadSwaps();
     } else {
@@ -206,13 +168,13 @@ export function SwapsGrid() {
     }
   };
 
-  // Cancel own swap
+  // Cancel own swap (only if still available)
   const handleCancel = async (swapRequest: SwapRequest) => {
     const success = await swapService.cancelSwap(swapRequest.id);
     if (success) {
       await loadSwaps();
     } else {
-      setError('Failed to cancel swap');
+      setError('Failed to cancel swap - it may have already been claimed');
     }
   };
 
@@ -231,63 +193,32 @@ export function SwapsGrid() {
     return `${diffDays}d ago`;
   };
 
-  const renderPendingCard = (request: SwapRequest) => {
-    const offers = swapOffers[request.id] ?? [];
-    const isOwnRequest = request.fromAgentEmail === currentUserEmail;
-    const userAssignedShifts = getUserAssignedShifts();
-    const canOffer = !isOwnRequest && request.type === 'trade' && userAssignedShifts.length > 0;
-    const canClaim = !isOwnRequest && request.type === 'giveaway';
+  const renderAvailableCard = (request: SwapRequest) => {
+    const isOwnRequest = linkedAgentId && getAgentName(linkedAgentId) === request.fromAgent;
 
     return (
       <div key={request.id} className="swap-card">
         <div className="swap-card__header">
           <span className="swap-card__shift">{formatShiftDisplay(request.day, request.shiftId)}</span>
-          <span className={`swap-card__type swap-card__type--${request.type}`}>
-            {request.type === 'trade' ? 'Looking for trade' : 'Free shift'}
-          </span>
         </div>
         <div className="swap-card__meta">
-          Posted by {getAgentName(request.fromAgentId)} · {formatTimeAgo(request.createdAt)}
+          From: {request.fromAgent} · Posted {formatTimeAgo(request.createdAt)}
         </div>
         {request.note && <div className="swap-card__note">"{request.note}"</div>}
 
-        {request.type === 'trade' && offers.length > 0 && (
-          <div className="swap-card__offers">
-            <div className="swap-card__offers-title">Offers ({offers.length}):</div>
-            {offers.map(offer => (
-              <div key={offer.id} className="swap-offer">
-                <span className="swap-offer__info">
-                  {getAgentName(offer.fromAgentId)} offered {formatShiftDisplay(offer.day, offer.shiftId)}
-                </span>
-                {isOwnRequest && (
-                  <div className="swap-offer__actions">
-                    <button
-                      className="btn-accept-offer"
-                      onClick={() => handleAcceptOffer(request, offer)}
-                    >
-                      Accept
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
         <div className="swap-card__actions">
-          {canOffer && (
-            <button className="btn-offer" onClick={() => setShowOfferModal(request)}>
-              Offer Trade
-            </button>
-          )}
-          {canClaim && (
-            <button className="btn-claim" onClick={() => handleClaimGiveaway(request)}>
-              I'll Take This Shift
-            </button>
-          )}
-          {isOwnRequest && (
+          {isOwnRequest ? (
             <button className="btn-cancel" onClick={() => handleCancel(request)}>
               Cancel
+            </button>
+          ) : (
+            <button
+              className="btn-claim"
+              onClick={() => handleClaimShift(request)}
+              disabled={!linkedAgentId}
+              title={!linkedAgentId ? 'You must be linked to a schedule agent' : undefined}
+            >
+              I'll Take This
             </button>
           )}
         </div>
@@ -296,30 +227,29 @@ export function SwapsGrid() {
   };
 
   const renderAwaitingCard = (request: SwapRequest) => {
-    const isAdmin = userRole === 'admin';
-
     return (
       <div key={request.id} className="swap-card swap-card--awaiting">
         <div className="swap-card__header">
-          {request.type === 'trade' ? (
-            <span className="swap-card__trade-info">
-              {getAgentName(request.fromAgentId)} ↔ {getAgentName(request.toAgentId ?? '')}
-            </span>
-          ) : (
-            <span className="swap-card__trade-info">
-              {getAgentName(request.fromAgentId)} → {getAgentName(request.toAgentId ?? '')}
-            </span>
-          )}
+          <span className="swap-card__shift">{formatShiftDisplay(request.day, request.shiftId)}</span>
         </div>
-        <div className="swap-card__meta">
-          {formatShiftDisplay(request.day, request.shiftId)}
-          {request.type === 'trade' && request.toDay && request.toShiftId && (
-            <> ↔ {formatShiftDisplay(request.toDay, request.toShiftId)}</>
-          )}
+        <div className="swap-card__trade-info">
+          {request.fromAgent} → {request.claimedBy}
         </div>
         <div className="swap-card__meta">
           Agreed {formatTimeAgo(request.claimedAt ?? request.createdAt)}
         </div>
+
+        {/* Show notes from both parties */}
+        {request.note && (
+          <div className="swap-card__note">
+            {request.fromAgent}: "{request.note}"
+          </div>
+        )}
+        {request.claimNote && (
+          <div className="swap-card__note">
+            {request.claimedBy}: "{request.claimNote}"
+          </div>
+        )}
 
         {isAdmin && (
           <div className="swap-card__actions">
@@ -335,7 +265,7 @@ export function SwapsGrid() {
     );
   };
 
-  const renderCompletedCard = (request: SwapRequest) => {
+  const renderHistoryCard = (request: SwapRequest) => {
     const statusIcon = request.status === 'approved' ? '✓' : request.status === 'denied' ? '✗' : '⊘';
     const statusClass = request.status;
 
@@ -343,10 +273,11 @@ export function SwapsGrid() {
       <div key={request.id} className={`swap-card swap-card--${statusClass}`}>
         <div className="swap-card__header">
           <span className="swap-card__status-icon">{statusIcon}</span>
-          <span>
-            {formatShiftDisplay(request.day, request.shiftId)} - {getAgentName(request.fromAgentId)}
-            {request.toAgentId && <> → {getAgentName(request.toAgentId)}</>}
-          </span>
+          <span className="swap-card__shift">{formatShiftDisplay(request.day, request.shiftId)}</span>
+        </div>
+        <div className="swap-card__meta">
+          {request.fromAgent}
+          {request.claimedBy && <> → {request.claimedBy}</>}
         </div>
         <div className="swap-card__meta">
           {request.status.charAt(0).toUpperCase() + request.status.slice(1)} · {formatTimeAgo(request.reviewedAt ?? request.createdAt)}
@@ -363,19 +294,30 @@ export function SwapsGrid() {
     <div className="swaps-grid">
       <div className="swaps-grid__header">
         <h2>Shift Swaps</h2>
-        <button className="btn-post-swap" onClick={() => setShowPostModal(true)}>
-          + Post Swap
+        <button
+          className="btn-post-swap"
+          onClick={() => setShowPostModal(true)}
+          disabled={!linkedAgentId}
+          title={!linkedAgentId ? 'You must be linked to a schedule agent in Team Management' : undefined}
+        >
+          + Make Available
         </button>
       </div>
+
+      {!linkedAgentId && (
+        <div className="swaps-grid__warning">
+          You are not linked to a schedule agent. Ask your admin to link your account in Team Management.
+        </div>
+      )}
 
       {error && <div className="swaps-grid__error">{error}</div>}
 
       <div className="swaps-grid__tabs">
         <button
-          className={`swaps-tab ${activeTab === 'pending' ? 'active' : ''}`}
-          onClick={() => setActiveTab('pending')}
+          className={`swaps-tab ${activeTab === 'available' ? 'active' : ''}`}
+          onClick={() => setActiveTab('available')}
         >
-          Pending ({pendingRequests.length})
+          Available ({availableRequests.length})
         </button>
         <button
           className={`swaps-tab ${activeTab === 'awaiting' ? 'active' : ''}`}
@@ -384,19 +326,24 @@ export function SwapsGrid() {
           Awaiting Approval ({awaitingRequests.length})
         </button>
         <button
-          className={`swaps-tab ${activeTab === 'completed' ? 'active' : ''}`}
-          onClick={() => setActiveTab('completed')}
+          className={`swaps-tab ${activeTab === 'history' ? 'active' : ''}`}
+          onClick={() => setActiveTab('history')}
         >
-          Completed
+          History
         </button>
       </div>
 
       <div className="swaps-grid__content">
-        {activeTab === 'pending' && (
-          pendingRequests.length === 0 ? (
-            <div className="swaps-grid__empty">No pending swap requests</div>
+        {activeTab === 'available' && (
+          availableRequests.length === 0 ? (
+            <div className="swaps-grid__empty">
+              <p>No shifts available for swap right now.</p>
+              <p className="swaps-grid__empty-hint">
+                Agents can make their shifts available if they need someone else to cover.
+              </p>
+            </div>
           ) : (
-            pendingRequests.map(renderPendingCard)
+            availableRequests.map(renderAvailableCard)
           )
         )}
 
@@ -408,11 +355,11 @@ export function SwapsGrid() {
           )
         )}
 
-        {activeTab === 'completed' && (
-          completedRequests.length === 0 ? (
+        {activeTab === 'history' && (
+          historyRequests.length === 0 ? (
             <div className="swaps-grid__empty">No completed swaps yet</div>
           ) : (
-            completedRequests.map(renderCompletedCard)
+            historyRequests.map(renderHistoryCard)
           )
         )}
       </div>
@@ -426,16 +373,6 @@ export function SwapsGrid() {
           loading={postingSwap}
         />
       )}
-
-      {/* Offer Trade Modal */}
-      {showOfferModal && (
-        <OfferTradeModal
-          swapRequest={showOfferModal}
-          assignedShifts={getUserAssignedShifts()}
-          onOffer={(day, shiftId, note) => handleOfferTrade(showOfferModal, day, shiftId, note)}
-          onClose={() => setShowOfferModal(null)}
-        />
-      )}
     </div>
   );
 }
@@ -443,7 +380,7 @@ export function SwapsGrid() {
 // Post Swap Modal Component
 interface PostSwapModalProps {
   assignedShifts: { day: DayOfWeek; shiftId: ShiftId }[];
-  onPost: (day: DayOfWeek, shiftId: ShiftId, type: 'trade' | 'giveaway', note?: string) => void;
+  onPost: (day: DayOfWeek, shiftId: ShiftId, note?: string) => void;
   onClose: () => void;
   loading: boolean;
 }
@@ -452,13 +389,12 @@ function PostSwapModal({ assignedShifts, onPost, onClose, loading }: PostSwapMod
   const [selectedShift, setSelectedShift] = useState<{ day: DayOfWeek; shiftId: ShiftId } | null>(
     assignedShifts[0] ?? null
   );
-  const [swapType, setSwapType] = useState<'trade' | 'giveaway'>('trade');
   const [note, setNote] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedShift) return;
-    onPost(selectedShift.day, selectedShift.shiftId, swapType, note || undefined);
+    onPost(selectedShift.day, selectedShift.shiftId, note || undefined);
   };
 
   if (assignedShifts.length === 0) {
@@ -466,10 +402,10 @@ function PostSwapModal({ assignedShifts, onPost, onClose, loading }: PostSwapMod
       <div className="modal-overlay" onClick={onClose}>
         <div className="modal-content" onClick={e => e.stopPropagation()}>
           <div className="modal-header">
-            <h2>Post Swap</h2>
+            <h2>Make Shift Available</h2>
             <button className="modal-close" onClick={onClose}>&times;</button>
           </div>
-          <p>You don't have any assigned shifts to swap.</p>
+          <p className="modal-empty">You don't have any assigned shifts to make available.</p>
         </div>
       </div>
     );
@@ -479,12 +415,12 @@ function PostSwapModal({ assignedShifts, onPost, onClose, loading }: PostSwapMod
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Post Swap Request</h2>
+          <h2>Make Shift Available</h2>
           <button className="modal-close" onClick={onClose}>&times;</button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <label>Select Shift to Swap</label>
+          <label>Select Shift</label>
           <select
             value={selectedShift ? `${selectedShift.day}-${selectedShift.shiftId}` : ''}
             onChange={(e) => {
@@ -498,30 +434,6 @@ function PostSwapModal({ assignedShifts, onPost, onClose, loading }: PostSwapMod
               </option>
             ))}
           </select>
-
-          <label>Swap Type</label>
-          <div className="swap-type-options">
-            <label className="swap-type-option">
-              <input
-                type="radio"
-                name="swapType"
-                checked={swapType === 'trade'}
-                onChange={() => setSwapType('trade')}
-              />
-              <span>Trade</span>
-              <small>Want another shift in return</small>
-            </label>
-            <label className="swap-type-option">
-              <input
-                type="radio"
-                name="swapType"
-                checked={swapType === 'giveaway'}
-                onChange={() => setSwapType('giveaway')}
-              />
-              <span>Giveaway</span>
-              <small>Anyone can take it</small>
-            </label>
-          </div>
 
           <label>Note (optional)</label>
           <input
@@ -536,77 +448,7 @@ function PostSwapModal({ assignedShifts, onPost, onClose, loading }: PostSwapMod
               Cancel
             </button>
             <button type="submit" className="btn-primary" disabled={loading || !selectedShift}>
-              {loading ? 'Posting...' : 'Post Swap'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-// Offer Trade Modal Component
-interface OfferTradeModalProps {
-  swapRequest: SwapRequest;
-  assignedShifts: { day: DayOfWeek; shiftId: ShiftId }[];
-  onOffer: (day: DayOfWeek, shiftId: ShiftId, note?: string) => void;
-  onClose: () => void;
-}
-
-function OfferTradeModal({ swapRequest, assignedShifts, onOffer, onClose }: OfferTradeModalProps) {
-  const [selectedShift, setSelectedShift] = useState<{ day: DayOfWeek; shiftId: ShiftId } | null>(
-    assignedShifts[0] ?? null
-  );
-  const [note, setNote] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedShift) return;
-    onOffer(selectedShift.day, selectedShift.shiftId, note || undefined);
-  };
-
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>Offer Trade</h2>
-          <button className="modal-close" onClick={onClose}>&times;</button>
-        </div>
-
-        <p className="modal-subtitle">
-          Offering to trade for: <strong>{formatShiftDisplay(swapRequest.day, swapRequest.shiftId)}</strong>
-        </p>
-
-        <form onSubmit={handleSubmit}>
-          <label>Your Shift to Offer</label>
-          <select
-            value={selectedShift ? `${selectedShift.day}-${selectedShift.shiftId}` : ''}
-            onChange={(e) => {
-              const [day, shiftId] = e.target.value.split('-') as [DayOfWeek, ShiftId];
-              setSelectedShift({ day, shiftId });
-            }}
-          >
-            {assignedShifts.map(({ day, shiftId }) => (
-              <option key={`${day}-${shiftId}`} value={`${day}-${shiftId}`}>
-                {formatShiftDisplay(day, shiftId)}
-              </option>
-            ))}
-          </select>
-
-          <label>Note (optional)</label>
-          <input
-            type="text"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Message to poster"
-          />
-
-          <div className="modal-actions">
-            <button type="button" className="btn-secondary" onClick={onClose}>
-              Cancel
-            </button>
-            <button type="submit" className="btn-primary" disabled={!selectedShift}>
-              Submit Offer
+              {loading ? 'Posting...' : 'Make Available'}
             </button>
           </div>
         </form>

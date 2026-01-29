@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabaseWorkspaceService } from '../../infrastructure/persistence/SupabaseWorkspaceService';
+import { swapService } from '../../infrastructure/persistence/SwapService';
 import { useAuth } from '../../store/AuthContext';
+import { useApp } from '../../store';
 import './TeamManagement.css';
 
 interface Member {
   user_email: string;
   role: 'admin' | 'agent';
   joined_at: string;
+  linked_agent_id?: string | null;
 }
 
 interface Invite {
@@ -25,6 +28,7 @@ interface TeamManagementProps {
 
 export function TeamManagement({ workspaceId, workspaceName, onClose }: TeamManagementProps) {
   const { user } = useAuth();
+  const { agents } = useApp();
   const [members, setMembers] = useState<Member[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
   const [workspaceCreator, setWorkspaceCreator] = useState<string>('');
@@ -43,7 +47,15 @@ export function TeamManagement({ workspaceId, workspaceName, onClose }: TeamMana
         supabaseWorkspaceService.getWorkspaceCreator(workspaceId),
       ]);
 
-      setMembers(membersData);
+      // Also load linked_agent_id for each member
+      const membersWithLinks = await Promise.all(
+        membersData.map(async (member) => {
+          const linkedAgentId = await swapService.getLinkedAgentId(workspaceId, member.user_email);
+          return { ...member, linked_agent_id: linkedAgentId };
+        })
+      );
+
+      setMembers(membersWithLinks);
       setInvites(invitesData);
       if (creator) {
         setWorkspaceCreator(creator);
@@ -71,6 +83,22 @@ export function TeamManagement({ workspaceId, workspaceName, onClose }: TeamMana
     } catch (err) {
       console.error('Failed to change role:', err);
       setError('Failed to change role');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleAgentLinkChange = async (memberEmail: string, agentId: string | null) => {
+    setActionLoading(`link-${memberEmail}`);
+    setError(null);
+
+    try {
+      const success = await swapService.linkAgentToMember(workspaceId, memberEmail, agentId);
+      if (!success) throw new Error('Failed to link agent');
+      await loadTeamData();
+    } catch (err) {
+      console.error('Failed to link agent:', err);
+      setError('Failed to link agent');
     } finally {
       setActionLoading(null);
     }
@@ -123,6 +151,12 @@ export function TeamManagement({ workspaceId, workspaceName, onClose }: TeamMana
     });
   };
 
+  // Get agent name by ID
+  const getAgentName = (agentId: string | null | undefined) => {
+    if (!agentId) return null;
+    return agents.find(a => a.id === agentId)?.name ?? null;
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="team-modal" onClick={e => e.stopPropagation()}>
@@ -159,28 +193,60 @@ export function TeamManagement({ workspaceId, workspaceName, onClose }: TeamMana
                       </div>
                     </div>
                     <div className="team-item-actions">
-                      {isCurrentUserAdmin && member.user_email !== currentUserEmail ? (
+                      {isCurrentUserAdmin ? (
                         <>
-                          <select
-                            value={member.role}
-                            onChange={e => handleRoleChange(member.user_email, e.target.value as 'admin' | 'agent')}
-                            disabled={actionLoading === member.user_email}
-                          >
-                            <option value="agent">Agent</option>
-                            <option value="admin">Admin</option>
-                          </select>
-                          {member.user_email !== workspaceCreator && (
-                            <button
-                              className="btn-remove"
-                              onClick={() => handleRemoveMember(member.user_email)}
-                              disabled={actionLoading === member.user_email}
+                          {/* Agent Linking Dropdown */}
+                          <div className="agent-link-wrapper">
+                            <label className="agent-link-label">Schedule Agent:</label>
+                            <select
+                              className="agent-link-select"
+                              value={member.linked_agent_id ?? ''}
+                              onChange={e => handleAgentLinkChange(
+                                member.user_email,
+                                e.target.value || null
+                              )}
+                              disabled={actionLoading === `link-${member.user_email}`}
                             >
-                              Remove
-                            </button>
+                              <option value="">Not linked</option>
+                              {agents.map(agent => (
+                                <option key={agent.id} value={agent.id}>
+                                  {agent.name} ({agent.contractHoursPerWeek}h)
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {member.user_email !== currentUserEmail && (
+                            <>
+                              <select
+                                value={member.role}
+                                onChange={e => handleRoleChange(member.user_email, e.target.value as 'admin' | 'agent')}
+                                disabled={actionLoading === member.user_email}
+                              >
+                                <option value="agent">Agent</option>
+                                <option value="admin">Admin</option>
+                              </select>
+                              {member.user_email !== workspaceCreator && (
+                                <button
+                                  className="btn-remove"
+                                  onClick={() => handleRemoveMember(member.user_email)}
+                                  disabled={actionLoading === member.user_email}
+                                >
+                                  Remove
+                                </button>
+                              )}
+                            </>
                           )}
                         </>
                       ) : (
-                        <span className="role-badge">{member.role}</span>
+                        <>
+                          {member.linked_agent_id && (
+                            <span className="agent-link-badge">
+                              {getAgentName(member.linked_agent_id)}
+                            </span>
+                          )}
+                          <span className="role-badge">{member.role}</span>
+                        </>
                       )}
                     </div>
                   </div>
